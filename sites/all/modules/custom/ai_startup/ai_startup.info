@@ -1,5 +1,0 @@
-name = AI Startup Helper
-description = Adds AI features for the Startup Incubator using Hugging Face API.
-core = 7.x
-package = Custom
-dependencies[] = rules

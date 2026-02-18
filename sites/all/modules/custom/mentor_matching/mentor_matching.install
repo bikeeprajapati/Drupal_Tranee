@@ -1,0 +1,108 @@
+<?php
+/**
+ * @file
+ * Install, update and uninstall functions for Mentor Matching module
+ */
+
+/**
+ * Implements hook_schema()
+ */
+function mentor_matching_schema() {
+$schema = array();
+
+$schema['mentor_matching_history'] = array(
+'description' => 'Stores history of mentor-startup matches',
+'fields' => array(
+    'id' => array(
+    'type' => 'serial',
+    'unsigned' => TRUE,
+    'not null' => TRUE,
+    'description' => 'Primary Key: Unique match ID',
+    ),
+    'startup_nid' => array(
+    'type' => 'int',
+    'unsigned' => TRUE,
+    'not null' => TRUE,
+    'default' => 0,
+    'description' => 'Startup node ID',
+    ),
+    'startup_title' => array(
+    'type' => 'varchar',
+    'length' => 255,
+    'not null' => TRUE,
+    'default' => '',
+    'description' => 'Startup title',
+    ),
+    'mentor_uid' => array(
+    'type' => 'int',
+    'unsigned' => TRUE,
+    'not null' => TRUE,
+    'default' => 0,
+    'description' => 'Mentor user ID',
+    ),
+    'mentor_name' => array(
+    'type' => 'varchar',
+    'length' => 255,
+    'not null' => TRUE,
+    'default' => '',
+    'description' => 'Mentor name',
+    ),
+    'match_score' => array(
+    'type' => 'int',
+    'size' => 'tiny',
+    'unsigned' => TRUE,
+    'not null' => TRUE,
+    'default' => 0,
+    'description' => 'Match score (0-100)',
+    ),
+    'industry' => array(
+    'type' => 'varchar',
+    'length' => 100,
+    'not null' => FALSE,
+    'description' => 'Startup industry',
+    ),
+    'assigned_by_uid' => array(
+    'type' => 'int',
+    'unsigned' => TRUE,
+    'not null' => TRUE,
+    'default' => 0,
+    'description' => 'Admin user who assigned',
+    ),
+    'assignment_method' => array(
+    'type' => 'varchar',
+    'length' => 50,
+    'not null' => TRUE,
+    'default' => 'manual',
+    'description' => 'How assigned: auto, manual',
+    ),
+    'timestamp' => array(
+    'type' => 'int',
+    'not null' => TRUE,
+    'default' => 0,
+    'description' => 'Unix timestamp of assignment',
+    ),
+),
+'primary key' => array('id'),
+'indexes' => array(
+    'startup_nid' => array('startup_nid'),
+    'mentor_uid' => array('mentor_uid'),
+    'timestamp' => array('timestamp'),
+),
+);
+
+return $schema;
+}
+
+/**
+ * Implements hook_install()
+ */
+function mentor_matching_install() {
+drupal_set_message(t('Mentor Matching module installed successfully. Match history logging enabled.'));
+}
+
+/**
+ * Implements hook_uninstall()
+ */
+function mentor_matching_uninstall() {
+drupal_set_message(t('Mentor Matching module uninstalled. Match history data has been removed.'));
+}

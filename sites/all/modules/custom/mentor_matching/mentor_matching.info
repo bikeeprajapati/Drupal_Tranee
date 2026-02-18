@@ -1,0 +1,10 @@
+name = Mentor Matching
+description = Automatically suggests best mentors for startups based on industry expertise and availability.
+core = 7.x
+package = SIMS Custom Modules
+version = 7.x-1.0
+
+files[] = mentor_matching.module
+files[] = mentor_matching.install
+files[] = mentor_matching.pages.inc
+files[] = mentor_matching.scoring.inc

@@ -1,0 +1,132 @@
+/* Smart Mentor Matching Module Styles */
+
+.mentor-matching-section {
+background: #f0f7ff;
+border: 2px solid #0073bb;
+border-radius: 8px;
+padding: 20px;
+margin: 20px 0;
+}
+
+.mentor-matching-section h3 {
+color: #0073bb;
+margin-top: 0;
+}
+
+.mentor-match-btn {
+background: #0073bb;
+color: white !important;
+padding: 10px 20px;
+border-radius: 5px;
+text-decoration: none;
+font-weight: bold;
+display: inline-block;
+margin-top: 10px;
+}
+
+.mentor-match-btn:hover {
+background: #005a8e;
+}
+
+.mentor-matching-results {
+padding: 20px;
+max-width: 1000px;
+}
+
+.mentor-match-table {
+width: 100%;
+border-collapse: collapse;
+margin-top: 20px;
+}
+
+.mentor-match-table th {
+background: #0073bb;
+color: white;
+padding: 12px;
+text-align: left;
+}
+
+.mentor-match-table td {
+padding: 12px;
+border-bottom: 1px solid #ddd;
+vertical-align: middle;
+}
+
+.mentor-match-table tr:hover {
+background: #f5f5f5;
+}
+
+.match-excellent {
+background: #28a745;
+color: white;
+padding: 4px 10px;
+border-radius: 12px;
+font-size: 12px;
+}
+
+.match-good {
+background: #17a2b8;
+color: white;
+padding: 4px 10px;
+border-radius: 12px;
+font-size: 12px;
+}
+
+.match-low {
+background: #6c757d;
+color: white;
+padding: 4px 10px;
+border-radius: 12px;
+font-size: 12px;
+}
+
+.auto-assign-btn {
+background: #28a745;
+color: white !important;
+padding: 8px 15px;
+border-radius: 5px;
+text-decoration: none;
+font-weight: bold;
+display: inline-block;
+font-size: 14px;
+}
+
+.auto-assign-btn:hover {
+background: #218838;
+}
+
+.best-match-badge {
+background: #ffc107;
+color: #000;
+padding: 5px 10px;
+border-radius: 12px;
+font-size: 12px;
+font-weight: bold;
+display: inline-block;
+margin-bottom: 5px;
+}
+
+/* History page styles */
+.history-table {
+font-size: 14px;
+}
+
+.history-table th {
+font-size: 13px;
+}
+
+.method-auto {
+background: #17a2b8;
+color: white;
+padding: 4px 8px;
+border-radius: 10px;
+font-size: 11px;
+}
+
+.method-manual {
+background: #6c757d;
+color: white;
+padding: 4px 8px;
+border-radius: 10px;
+font-size: 11px;
+}
