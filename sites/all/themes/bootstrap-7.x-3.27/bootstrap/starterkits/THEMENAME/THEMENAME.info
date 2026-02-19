@@ -12,3 +12,4 @@ description = Custom subtheme for Startup Dashboard
 
 ; Stylesheets
 stylesheets[all][] = css/custom.css
+stylesheets[all][] = css/dashboard.css

@@ -1,0 +1,162 @@
+/* Admin Dashboard Styles */
+.admin-dashboard-header {
+display: flex;
+justify-content: space-between;
+align-items: center;
+margin-bottom: 30px;
+padding: 20px 0;
+}
+
+.dashboard-title {
+font-size: 32px;
+margin: 0;
+color: #667eea;
+font-weight: bold;
+}
+
+.btn-add-startup {
+background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+color: white !important;
+padding: 12px 24px;
+border-radius: 8px;
+text-decoration: none;
+font-weight: 600;
+font-size: 16px;
+transition: all 0.3s ease;
+box-shadow: 0 4px 6px rgba(102, 126, 234, 0.3);
+}
+
+.btn-add-startup:hover {
+transform: translateY(-2px);
+box-shadow: 0 6px 12px rgba(102, 126, 234, 0.4);
+}
+
+.admin-dashboard-stats {
+display: grid;
+grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+gap: 20px;
+margin-bottom: 30px;
+}
+
+.stat-card {
+background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+border-radius: 12px;
+padding: 20px;
+color: white;
+display: flex;
+align-items: center;
+gap: 15px;
+box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.stat-card:hover {
+transform: translateY(-5px);
+box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+}
+
+.stat-icon {
+font-size: 24px;
+font-weight: bold;
+opacity: 0.9;
+}
+
+.stat-content {
+flex: 1;
+}
+
+.stat-number {
+font-size: 36px;
+font-weight: bold;
+line-height: 1;
+margin-bottom: 5px;
+}
+
+.stat-label {
+font-size: 13px;
+opacity: 0.95;
+text-transform: uppercase;
+letter-spacing: 1px;
+font-weight: 500;
+}
+
+.stat-screening {
+background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+}
+
+.stat-selected {
+background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+}
+
+.stat-funded {
+background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+}
+
+.stat-rejected {
+background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+}
+
+.view-filters {
+background: white;
+padding: 20px;
+border-radius: 12px;
+box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+margin-bottom: 20px;
+}
+
+.views-exposed-form label {
+font-weight: 600;
+color: #333;
+margin-bottom: 5px;
+}
+
+.views-exposed-form select {
+border: 2px solid #e0e0e0;
+border-radius: 8px;
+padding: 10px;
+font-size: 14px;
+}
+
+.views-exposed-form .form-submit {
+background: #667eea;
+color: white;
+border: none;
+padding: 10px 24px;
+border-radius: 8px;
+font-weight: 600;
+cursor: pointer;
+}
+
+.view-admin-dashboard table {
+width: 100%;
+border-collapse: collapse;
+background: white;
+border-radius: 12px;
+overflow: hidden;
+}
+
+.view-admin-dashboard thead {
+background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.view-admin-dashboard th {
+color: white;
+padding: 16px;
+font-weight: 600;
+text-align: left;
+}
+
+.view-admin-dashboard td {
+padding: 14px 16px;
+border-bottom: 1px solid #f0f0f0;
+}
+
+.view-admin-dashboard tbody tr:hover {
+background: #f8f9ff;
+}
+
+.view-admin-dashboard .views-field-title a {
+color: #667eea;
+font-weight: 600;
+text-decoration: none;
+}
