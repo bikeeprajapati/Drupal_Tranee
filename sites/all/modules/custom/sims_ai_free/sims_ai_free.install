@@ -1,0 +1,339 @@
+<?php
+
+/**
+ * @file
+ * Install, update and uninstall functions for SIMS AI Free module.
+ */
+
+/**
+ * Implements hook_schema().
+ */
+function sims_ai_free_schema() {
+$schema = array();
+
+// Conversations table
+$schema['sims_ai_conversations'] = array(
+'description' => 'AI chatbot conversations',
+'fields' => array(
+    'conversation_id' => array(
+    'type' => 'serial',
+    'not null' => TRUE,
+    'description' => 'Conversation ID',
+    ),
+    'uid' => array(
+    'type' => 'int',
+    'not null' => TRUE,
+    'description' => 'User ID',
+    ),
+    'startup_id' => array(
+    'type' => 'int',
+    'description' => 'Related startup node ID',
+    ),
+    'created' => array(
+    'type' => 'int',
+    'not null' => TRUE,
+    'description' => 'Created timestamp',
+    ),
+    'updated' => array(
+    'type' => 'int',
+    'not null' => TRUE,
+    'description' => 'Updated timestamp',
+    ),
+),
+'primary key' => array('conversation_id'),
+'indexes' => array(
+    'uid' => array('uid'),
+    'startup_id' => array('startup_id'),
+    'updated' => array('updated'),
+),
+);
+
+// Messages table
+$schema['sims_ai_messages'] = array(
+'description' => 'Chat messages',
+'fields' => array(
+    'message_id' => array(
+    'type' => 'serial',
+    'not null' => TRUE,
+    'description' => 'Message ID',
+    ),
+    'conversation_id' => array(
+    'type' => 'int',
+    'not null' => TRUE,
+    'description' => 'Conversation ID',
+    ),
+    'role' => array(
+    'type' => 'varchar',
+    'length' => 20,
+    'not null' => TRUE,
+    'description' => 'Role: user or assistant',
+    ),
+    'content' => array(
+    'type' => 'text',
+    'not null' => TRUE,
+    'description' => 'Message content',
+    ),
+    'timestamp' => array(
+    'type' => 'int',
+    'not null' => TRUE,
+    'description' => 'Message timestamp',
+    ),
+),
+'primary key' => array('message_id'),
+'indexes' => array(
+    'conversation_id' => array('conversation_id'),
+    'timestamp' => array('timestamp'),
+),
+);
+
+// Cache table
+$schema['sims_ai_cache'] = array(
+'description' => 'AI response cache',
+'fields' => array(
+    'cache_id' => array(
+    'type' => 'serial',
+    'not null' => TRUE,
+    'description' => 'Cache ID',
+    ),
+    'cache_key' => array(
+    'type' => 'varchar',
+    'length' => 255,
+    'not null' => TRUE,
+    'description' => 'Unique cache key',
+    ),
+    'feature' => array(
+    'type' => 'varchar',
+    'length' => 50,
+    'not null' => TRUE,
+    'description' => 'Feature name',
+    ),
+    'response_data' => array(
+    'type' => 'text',
+    'not null' => TRUE,
+    'description' => 'Cached response',
+    ),
+    'created' => array(
+    'type' => 'int',
+    'not null' => TRUE,
+    'description' => 'Created timestamp',
+    ),
+    'expires' => array(
+    'type' => 'int',
+    'not null' => TRUE,
+    'description' => 'Expiration timestamp',
+    ),
+    'hit_count' => array(
+    'type' => 'int',
+    'default' => 0,
+    'description' => 'Number of cache hits',
+    ),
+),
+'primary key' => array('cache_id'),
+'unique keys' => array(
+    'cache_key' => array('cache_key'),
+),
+'indexes' => array(
+    'expires' => array('expires'),
+    'feature' => array('feature'),
+),
+);
+
+// Analytics table
+$schema['sims_ai_analytics'] = array(
+'description' => 'AI usage analytics',
+'fields' => array(
+    'aid' => array(
+    'type' => 'serial',
+    'not null' => TRUE,
+    'description' => 'Analytics ID',
+    ),
+    'uid' => array(
+    'type' => 'int',
+    'not null' => TRUE,
+    'description' => 'User ID',
+    ),
+    'provider' => array(
+    'type' => 'varchar',
+    'length' => 50,
+    'not null' => TRUE,
+    'description' => 'AI provider: ollama or huggingface',
+    ),
+    'feature' => array(
+    'type' => 'varchar',
+    'length' => 50,
+    'not null' => TRUE,
+    'description' => 'Feature name',
+    ),
+    'response_time' => array(
+    'type' => 'int',
+    'default' => 0,
+    'description' => 'Response time in milliseconds',
+    ),
+    'success' => array(
+    'type' => 'int',
+    'size' => 'tiny',
+    'default' => 1,
+    'description' => 'Success status',
+    ),
+    'timestamp' => array(
+    'type' => 'int',
+    'not null' => TRUE,
+    'description' => 'Timestamp',
+    ),
+),
+'primary key' => array('aid'),
+'indexes' => array(
+    'uid' => array('uid'),
+    'provider' => array('provider'),
+    'feature' => array('feature'),
+    'timestamp' => array('timestamp'),
+),
+);
+
+// Insights table
+$schema['sims_ai_insights'] = array(
+'description' => 'Stored AI insights for startups',
+'fields' => array(
+    'insight_id' => array(
+    'type' => 'serial',
+    'not null' => TRUE,
+    'description' => 'Insight ID',
+    ),
+    'entity_type' => array(
+    'type' => 'varchar',
+    'length' => 50,
+    'not null' => TRUE,
+    'description' => 'Entity type (usually "node")',
+    ),
+    'entity_id' => array(
+    'type' => 'int',
+    'not null' => TRUE,
+    'description' => 'Entity ID (node ID)',
+    ),
+    'insight_type' => array(
+    'type' => 'varchar',
+    'length' => 50,
+    'not null' => TRUE,
+    'description' => 'Type: screening, analysis, etc',
+    ),
+    'data' => array(
+    'type' => 'text',
+    'not null' => TRUE,
+    'description' => 'Serialized insight data',
+    ),
+    'score' => array(
+    'type' => 'numeric',
+    'precision' => 5,
+    'scale' => 2,
+    'description' => 'Numeric score if applicable',
+    ),
+    'created' => array(
+    'type' => 'int',
+    'not null' => TRUE,
+    'description' => 'Created timestamp',
+    ),
+    'updated' => array(
+    'type' => 'int',
+    'not null' => TRUE,
+    'description' => 'Updated timestamp',
+    ),
+),
+'primary key' => array('insight_id'),
+'indexes' => array(
+    'entity' => array('entity_type', 'entity_id'),
+    'insight_type' => array('insight_type'),
+    'updated' => array('updated'),
+),
+);
+
+return $schema;
+}
+
+/**
+ * Implements hook_install().
+ */
+function sims_ai_free_install() {
+// Set default variables
+variable_set('sims_ai_free_provider', 'ollama');
+variable_set('sims_ai_free_ollama_url', 'http://localhost:11434');
+variable_set('sims_ai_free_ollama_model', 'phi');
+variable_set('sims_ai_free_cache_enabled', TRUE);
+variable_set('sims_ai_free_cache_ttl', 86400); // 24 hours
+
+drupal_set_message(t('SIMS AI Free module installed successfully. Configure at <a href="@url">admin/config/sims/ai-free</a>', 
+array('@url' => url('admin/config/sims/ai-free'))));
+}
+
+/**
+ * Implements hook_uninstall().
+ */
+function sims_ai_free_uninstall() {
+// Delete all variables
+variable_del('sims_ai_free_provider');
+variable_del('sims_ai_free_ollama_url');
+variable_del('sims_ai_free_ollama_model');
+variable_del('sims_ai_free_hf_token');
+variable_del('sims_ai_free_hf_model');
+variable_del('sims_ai_free_cache_enabled');
+variable_del('sims_ai_free_cache_ttl');
+
+drupal_set_message(t('SIMS AI Free module uninstalled.'));
+}
+
+/**
+ * Implements hook_requirements().
+ */
+function sims_ai_free_requirements($phase) {
+$requirements = array();
+
+if ($phase === 'runtime') {
+$provider = variable_get('sims_ai_free_provider', 'ollama');
+
+// Check cURL
+$requirements['sims_ai_free_curl'] = array(
+    'title' => t('SIMS AI Free - cURL'),
+    'value' => function_exists('curl_version') ? t('Available') : t('Not available'),
+    'severity' => function_exists('curl_version') ? REQUIREMENT_OK : REQUIREMENT_ERROR,
+    'description' => function_exists('curl_version')
+    ? t('cURL is available for AI API communication.')
+    : t('cURL extension is required. Please enable it in php.ini'),
+);
+
+// Check provider configuration
+if ($provider === 'ollama') {
+    module_load_include('inc', 'sims_ai_free', 'includes/sims_ai_free.ollama');
+    $ollama_test = sims_ai_free_ollama_test_connection();
+    
+    $requirements['sims_ai_free_ollama'] = array(
+    'title' => t('SIMS AI Free - Ollama'),
+    'value' => $ollama_test ? t('Connected') : t('Not connected'),
+    'severity' => $ollama_test ? REQUIREMENT_OK : REQUIREMENT_WARNING,
+    'description' => $ollama_test
+        ? t('Ollama is running and accessible at @url', array('@url' => variable_get('sims_ai_free_ollama_url', 'http://localhost:11434')))
+        : t('Cannot connect to Ollama. Make sure it is running: sudo systemctl start ollama'),
+    );
+}
+elseif ($provider === 'huggingface') {
+    $token = variable_get('sims_ai_free_hf_token', '');
+    
+    $requirements['sims_ai_free_hf'] = array(
+    'title' => t('SIMS AI Free - Hugging Face'),
+    'value' => !empty($token) ? t('Token configured') : t('Token not configured'),
+    'severity' => !empty($token) ? REQUIREMENT_OK : REQUIREMENT_WARNING,
+    'description' => !empty($token)
+        ? t('Hugging Face API token is configured.')
+        : t('Hugging Face API token not configured. Visit <a href="@url">settings page</a>.', array('@url' => url('admin/config/sims/ai-free'))),
+    );
+}
+}
+
+return $requirements;
+}
+
+/**
+ * Implements hook_enable().
+ */
+function sims_ai_free_enable() {
+drupal_set_message(t('SIMS AI Free module enabled. Visit <a href="@url">configuration page</a> to set up your AI provider.', 
+array('@url' => url('admin/config/sims/ai-free'))));
+}

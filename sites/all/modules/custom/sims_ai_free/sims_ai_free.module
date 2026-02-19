@@ -1,0 +1,277 @@
+<?php
+
+/**
+ * @file
+ * SIMS AI Free Module - Open source AI integration
+ */
+
+/**
+ * Implements hook_menu().
+ */
+function sims_ai_free_menu() {
+  $items = array();
+  
+  // Admin settings
+  $items['admin/config/sims/ai-free'] = array(
+    'title' => 'SIMS AI Settings (Free)',
+    'description' => 'Configure free AI integration',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('sims_ai_free_admin_settings_form'),
+    'access arguments' => array('administer sims ai'),
+    'file' => 'includes/sims_ai_free.admin.inc',
+  );
+  
+  // Founder chatbot
+  $items['sims/ai-free/chatbot'] = array(
+    'title' => 'AI Assistant',
+    'page callback' => 'sims_ai_free_chatbot_page',
+    'access callback' => 'user_access',
+    'access arguments' => array('use sims ai chatbot'),
+  );
+  
+  $items['sims/ai-free/chatbot/message'] = array(
+    'page callback' => 'sims_ai_free_chatbot_ajax',
+    'access callback' => 'user_access',
+    'access arguments' => array('use sims ai chatbot'),
+    'type' => MENU_CALLBACK,
+  );
+  
+  // Admin screener
+  $items['admin/sims/ai-free/screen/%node'] = array(
+    'title' => 'AI Screening',
+    'page callback' => 'sims_ai_free_screen_startup',
+    'page arguments' => array(4),
+    'access arguments' => array('administer sims'),
+  );
+  
+  return $items;
+}
+
+/**
+ * Implements hook_permission().
+ */
+function sims_ai_free_permission() {
+  return array(
+    'administer sims ai' => array(
+      'title' => t('Administer SIMS AI'),
+    ),
+    'use sims ai chatbot' => array(
+      'title' => t('Use AI Chatbot'),
+    ),
+  );
+}
+
+/**
+ * Page callback for chatbot.
+ */
+function sims_ai_free_chatbot_page() {
+  drupal_add_js(drupal_get_path('module', 'sims_ai_free') . '/js/sims_ai_free.chatbot.js');
+  drupal_add_css(drupal_get_path('module', 'sims_ai_free') . '/css/sims_ai_free.styles.css');
+  
+  global $user;
+  $conversation_id = sims_ai_free_get_or_create_conversation($user->uid);
+  $messages = sims_ai_free_load_messages($conversation_id);
+  
+  return theme('sims_ai_free_chatbot', array(
+    'conversation_id' => $conversation_id,
+    'messages' => $messages,
+  ));
+}
+
+/**
+ * AJAX callback for chatbot.
+ */
+function sims_ai_free_chatbot_ajax() {
+  global $user;
+  
+  // Try to get data from multiple sources
+  $data = NULL;
+  
+  // Method 1: Raw input (for JSON POST)
+  $raw_input = file_get_contents('php://input');
+  if (!empty($raw_input)) {
+    $data = json_decode($raw_input, TRUE);
+  }
+  
+  // Method 2: $_POST (for form-encoded)
+  if (empty($data) && !empty($_POST)) {
+    $data = $_POST;
+  }
+  
+  // Method 3: $_REQUEST (fallback)
+  if (empty($data) && !empty($_REQUEST)) {
+    $data = $_REQUEST;
+  }
+  
+  watchdog('sims_ai_free', 'AJAX Debug - Raw: @raw, POST: @post, Data: @data', array(
+    '@raw' => substr($raw_input, 0, 100),
+    '@post' => print_r($_POST, TRUE),
+    '@data' => print_r($data, TRUE),
+  ), WATCHDOG_DEBUG);
+  
+  $conversation_id = isset($data['conversation_id']) ? (int) $data['conversation_id'] : 0;
+  $message = isset($data['message']) ? trim($data['message']) : '';
+  
+  if (empty($message)) {
+    drupal_json_output(array('error' => 'Empty message. Debug: ' . print_r($data, TRUE)));
+    return;
+  }
+  
+  // Verify ownership
+  if (!sims_ai_free_verify_conversation($conversation_id, $user->uid)) {
+    drupal_json_output(array('error' => 'Access denied'));
+    return;
+  }
+  
+  // Save user message
+  sims_ai_free_save_message($conversation_id, 'user', $message);
+  
+  // Get conversation history
+  $history = sims_ai_free_get_history($conversation_id);
+  
+  // Call AI
+  $provider = variable_get('sims_ai_free_provider', 'ollama');
+  
+  if ($provider === 'ollama') {
+    module_load_include('inc', 'sims_ai_free', 'includes/sims_ai_free.ollama');
+    $response = sims_ai_free_ollama_chat($message, $history);
+  }
+  else {
+    module_load_include('inc', 'sims_ai_free', 'includes/sims_ai_free.huggingface');
+    $response = sims_ai_free_huggingface_generate($message, $history);
+  }
+  
+  if ($response === FALSE) {
+    drupal_json_output(array('error' => 'AI service unavailable'));
+    return;
+  }
+  
+  // Save AI response
+  sims_ai_free_save_message($conversation_id, 'assistant', $response['text']);
+  
+  drupal_json_output(array(
+    'success' => TRUE,
+    'message' => $response['text'],
+  ));
+}
+
+/**
+ * Page callback for screening.
+ */
+function sims_ai_free_screen_startup($node) {
+  if ($node->type !== 'startup_idea') {
+    return MENU_NOT_FOUND;
+  }
+  
+  drupal_add_js(drupal_get_path('module', 'sims_ai_free') . '/js/sims_ai_free.screener.js');
+  drupal_add_css(drupal_get_path('module', 'sims_ai_free') . '/css/sims_ai_free.styles.css');
+  
+  // Check if already screened
+  module_load_include('inc', 'sims_ai_free', 'includes/sims_ai_free.features');
+  $existing = sims_ai_free_get_insight($node->nid, 'screening_summary');
+  
+  $variables = array('node' => $node);
+  if ($existing) {
+    $variables['existing_screening'] = unserialize($existing->data);
+  }
+  
+  return theme('sims_ai_free_screener', $variables);
+}
+
+/**
+ * Implements hook_theme().
+ */
+function sims_ai_free_theme() {
+  return array(
+    'sims_ai_free_chatbot' => array(
+      'template' => 'templates/chatbot',
+      'variables' => array(
+        'conversation_id' => NULL,
+        'messages' => array(),
+      ),
+    ),
+    'sims_ai_free_screener' => array(
+      'template' => 'templates/screener',
+      'variables' => array(
+        'node' => NULL,
+        'existing_screening' => NULL,
+      ),
+    ),
+  );
+}
+
+// Helper functions
+function sims_ai_free_get_or_create_conversation($uid) {
+  $conversation_id = db_select('sims_ai_conversations', 'c')
+    ->fields('c', array('conversation_id'))
+    ->condition('uid', $uid)
+    ->orderBy('updated', 'DESC')
+    ->range(0, 1)
+    ->execute()
+    ->fetchField();
+    
+  if ($conversation_id) {
+    db_update('sims_ai_conversations')
+      ->fields(array('updated' => REQUEST_TIME))
+      ->condition('conversation_id', $conversation_id)
+      ->execute();
+    return $conversation_id;
+  }
+  
+  return db_insert('sims_ai_conversations')
+    ->fields(array(
+      'uid' => $uid,
+      'created' => REQUEST_TIME,
+      'updated' => REQUEST_TIME,
+    ))
+    ->execute();
+}
+
+function sims_ai_free_load_messages($conversation_id) {
+  return db_select('sims_ai_messages', 'm')
+    ->fields('m')
+    ->condition('conversation_id', $conversation_id)
+    ->orderBy('timestamp', 'ASC')
+    ->execute()
+    ->fetchAll();
+}
+
+function sims_ai_free_save_message($conversation_id, $role, $content) {
+  db_insert('sims_ai_messages')
+    ->fields(array(
+      'conversation_id' => $conversation_id,
+      'role' => $role,
+      'content' => $content,
+      'timestamp' => REQUEST_TIME,
+    ))
+    ->execute();
+}
+
+function sims_ai_free_verify_conversation($conversation_id, $uid) {
+  $owner = db_select('sims_ai_conversations', 'c')
+    ->fields('c', array('uid'))
+    ->condition('conversation_id', $conversation_id)
+    ->execute()
+    ->fetchField();
+  return $owner == $uid;
+}
+
+function sims_ai_free_get_history($conversation_id, $limit = 10) {
+  $messages = db_select('sims_ai_messages', 'm')
+    ->fields('m', array('role', 'content'))
+    ->condition('conversation_id', $conversation_id)
+    ->orderBy('timestamp', 'DESC')
+    ->range(0, $limit)
+    ->execute()
+    ->fetchAll();
+    
+  return array_reverse($messages);
+}
+
+/**
+ * Implements hook_cron().
+ */
+function sims_ai_free_cron() {
+  module_load_include('inc', 'sims_ai_free', 'includes/sims_ai_free.cache');
+  sims_ai_free_clear_expired_cache();
+}

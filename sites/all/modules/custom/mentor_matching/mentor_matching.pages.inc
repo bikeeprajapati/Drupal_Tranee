@@ -157,56 +157,61 @@ drupal_goto('mentor-matching/' . $node->nid);
 return;
 }
 
-// Calculate match score for history
-module_load_include('inc', 'mentor_matching', 'mentor_matching.scoring');
+// Get industry and calculate score
 $industry = mentor_matching_get_startup_industry($node);
 
-// Create a mentor object with required fields for scoring
-$mentor_obj = new stdClass();
-$mentor_obj->uid = $mentor->uid;
-$mentor_obj->name = $mentor->name;
-$mentor_obj->mail = $mentor->mail;
+// Load scoring functions
+module_load_include('inc', 'mentor_matching', 'mentor_matching.scoring');
 
-$score = mentor_matching_calculate_score($mentor_obj, $industry);
+// Build simple mentor object for scoring
+$mentor_basic = new stdClass();
+$mentor_basic->uid = $mentor->uid;
+$mentor_basic->name = $mentor->name;
+$mentor_basic->mail = $mentor->mail;
 
-// Log to history BEFORE assignment
+$score = 50; // Default score if calculation fails
+
+try {
+$score = mentor_matching_calculate_score($mentor_basic, $industry);
+} catch (Exception $e) {
+watchdog('mentor_matching', 'Error calculating score: @error', array('@error' => $e->getMessage()), WATCHDOG_ERROR);
+}
+
+// Log to history
+try {
 mentor_matching_log_assignment(
-$node->nid,
-$node->title,
-$mentor->uid,
-$mentor->name,
-$score,
-$industry,
-$user->uid,
-'auto'
+    $node->nid,
+    $node->title,
+    $mentor->uid,
+    $mentor->name,
+    $score,
+    $industry,
+    $user->uid,
+    'auto'
 );
+} catch (Exception $e) {
+watchdog('mentor_matching', 'Error logging assignment: @error', array('@error' => $e->getMessage()), WATCHDOG_ERROR);
+}
 
 // Assign the mentor
 $node->field_assigned_mentor[LANGUAGE_NONE][0]['uid'] = $mentor_uid;
 node_save($node);
 
 // Send email notification
+try {
 mentor_matching_send_assignment_email($mentor, $node);
+} catch (Exception $e) {
+watchdog('mentor_matching', 'Error sending email: @error', array('@error' => $e->getMessage()), WATCHDOG_ERROR);
+}
 
 drupal_set_message(
-t('Successfully assigned @mentor to startup "@title"! An email notification has been sent.', 
+t('Successfully assigned @mentor to startup "@title"!', 
     array(
     '@mentor' => $mentor->name,
     '@title' => $node->title,
     )
 ), 
 'status'
-);
-
-watchdog('mentor_matching', 
-'Auto-assigned mentor @mentor (UID: @uid) to startup @title (NID: @nid)', 
-array(
-    '@mentor' => $mentor->name,
-    '@uid' => $mentor_uid,
-    '@title' => $node->title,
-    '@nid' => $node->nid,
-), 
-WATCHDOG_INFO
 );
 
 drupal_goto('node/' . $node->nid);
@@ -218,12 +223,7 @@ drupal_goto('node/' . $node->nid);
 function mentor_matching_send_assignment_email($mentor, $node) {
 global $base_url;
 
-$industry = '';
-if (!empty($node->field_industry[LANGUAGE_NONE][0]['tid'])) {
-$term = taxonomy_term_load($node->field_industry[LANGUAGE_NONE][0]['tid']);
-$industry = $term->name;
-}
-
+$industry = mentor_matching_get_startup_industry($node);
 $founder = user_load($node->uid);
 
 $params = array(
@@ -231,58 +231,27 @@ $params = array(
 'body' => t(
     "Dear @mentor,
 
-You have been assigned as a mentor for a new startup through our Smart Mentor Matching system!
+You have been assigned as a mentor for a new startup!
 
-🚀 Startup Details:
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-- Name: @title
-- Industry: @industry
-- Founder: @founder
-- Submitted: @date
+Startup: @title
+Industry: @industry
+Founder: @founder
 
-📊 Why You Were Matched:
-You were selected as the best match based on your expertise in @industry and current availability.
-
-🎯 Next Steps:
-1. Review the startup details at: @url
-2. Contact the founder to schedule an initial meeting
-3. Begin the mentoring relationship
-
-Log in to view full startup details:
-@base_url/drupal7/?q=mentor/startups
+View details: @url
 
 Best regards,
-InnovateX Incubator Team
-
----
-This is an automated email from the Mentor Matching System.",
+InnovateX Team",
     array(
     '@mentor' => $mentor->name,
     '@title' => $node->title,
     '@industry' => $industry,
     '@founder' => $founder->name,
-    '@date' => format_date($node->created, 'medium'),
     '@url' => $base_url . '/drupal7/?q=node/' . $node->nid,
-    '@base_url' => $base_url,
     )
 ),
 );
 
-$result = drupal_mail('mentor_matching', 'mentor_assigned', $mentor->mail, language_default(), $params);
-
-if ($result['result']) {
-watchdog('mentor_matching', 
-    'Assignment email sent to @mentor (@email) for startup @title', 
-    array(
-    '@mentor' => $mentor->name,
-    '@email' => $mentor->mail,
-    '@title' => $node->title,
-    ), 
-    WATCHDOG_INFO
-);
-}
-
-return $result['result'];
+drupal_mail('mentor_matching', 'mentor_assigned', $mentor->mail, language_default(), $params);
 }
 
 /**
@@ -302,17 +271,6 @@ $record = array(
 );
 
 drupal_write_record('mentor_matching_history', $record);
-
-watchdog('mentor_matching', 
-'Logged assignment: @mentor to @startup (Score: @score, Method: @method)', 
-array(
-    '@mentor' => $mentor_name,
-    '@startup' => $startup_title,
-    '@score' => $score,
-    '@method' => $method,
-), 
-WATCHDOG_INFO
-);
 }
 
 /**
@@ -323,10 +281,9 @@ drupal_add_css(drupal_get_path('module', 'mentor_matching') . '/mentor_matching.
 
 $output = '<div class="mentor-matching-results">';
 $output .= '<h2>📊 Mentor Matching History</h2>';
-$output .= '<p>Complete audit trail of all mentor assignments made through the Smart Matching system.</p>';
+$output .= '<p>Complete audit trail of all mentor assignments.</p>';
 $output .= '<hr/>';
 
-// Get all history records
 $query = db_select('mentor_matching_history', 'h')
 ->fields('h')
 ->orderBy('timestamp', 'DESC')

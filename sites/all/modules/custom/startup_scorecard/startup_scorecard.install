@@ -1,0 +1,113 @@
+<?php
+/**
+ * @file
+ * Install, update and uninstall functions for Startup Scorecard module
+ */
+
+/**
+ * Implements hook_schema()
+ */
+function startup_scorecard_schema() {
+$schema = array();
+
+$schema['startup_scorecard'] = array(
+'description' => 'Stores startup scores and ratings',
+'fields' => array(
+    'score_id' => array(
+    'type' => 'serial',
+    'unsigned' => TRUE,
+    'not null' => TRUE,
+    'description' => 'Primary Key: Unique score ID',
+    ),
+    'startup_nid' => array(
+    'type' => 'int',
+    'unsigned' => TRUE,
+    'not null' => TRUE,
+    'default' => 0,
+    'description' => 'Startup node ID',
+    ),
+    'rater_uid' => array(
+    'type' => 'int',
+    'unsigned' => TRUE,
+    'not null' => TRUE,
+    'default' => 0,
+    'description' => 'User who rated',
+    ),
+    'team_strength' => array(
+    'type' => 'int',
+    'size' => 'tiny',
+    'unsigned' => TRUE,
+    'not null' => TRUE,
+    'default' => 0,
+    'description' => 'Team strength score (0-25)',
+    ),
+    'market_opportunity' => array(
+    'type' => 'int',
+    'size' => 'tiny',
+    'unsigned' => TRUE,
+    'not null' => TRUE,
+    'default' => 0,
+    'description' => 'Market opportunity score (0-25)',
+    ),
+    'business_model' => array(
+    'type' => 'int',
+    'size' => 'tiny',
+    'unsigned' => TRUE,
+    'not null' => TRUE,
+    'default' => 0,
+    'description' => 'Business model score (0-25)',
+    ),
+    'technical_feasibility' => array(
+    'type' => 'int',
+    'size' => 'tiny',
+    'unsigned' => TRUE,
+    'not null' => TRUE,
+    'default' => 0,
+    'description' => 'Technical feasibility score (0-25)',
+    ),
+    'total_score' => array(
+    'type' => 'int',
+    'size' => 'tiny',
+    'unsigned' => TRUE,
+    'not null' => TRUE,
+    'default' => 0,
+    'description' => 'Total score (0-100)',
+    ),
+    'comments' => array(
+    'type' => 'text',
+    'size' => 'normal',
+    'not null' => FALSE,
+    'description' => 'Additional comments',
+    ),
+    'timestamp' => array(
+    'type' => 'int',
+    'not null' => TRUE,
+    'default' => 0,
+    'description' => 'Unix timestamp when scored',
+    ),
+),
+'primary key' => array('score_id'),
+'indexes' => array(
+    'startup_nid' => array('startup_nid'),
+    'rater_uid' => array('rater_uid'),
+    'total_score' => array('total_score'),
+    'timestamp' => array('timestamp'),
+),
+);
+
+return $schema;
+}
+
+/**
+ * Implements hook_install()
+ */
+function startup_scorecard_install() {
+drupal_set_message(t('Startup Scorecard module installed successfully. You can now rate startups!'));
+}
+
+/**
+ * Implements hook_uninstall()
+ */
+function startup_scorecard_uninstall() {
+drupal_set_message(t('Startup Scorecard module uninstalled. All score data has been removed.'));
+}

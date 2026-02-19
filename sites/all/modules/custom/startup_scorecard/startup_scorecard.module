@@ -1,0 +1,236 @@
+<?php
+/**
+ * @file
+ * Startup Scorecard Module
+ * Rate and score startups on multiple criteria
+ */
+
+/**
+ * Implements hook_menu()
+ */
+function startup_scorecard_menu() {
+$items = array();
+
+// Score form
+$items['node/%node/score'] = array(
+'title' => 'Score Startup',
+'page callback' => 'drupal_get_form',
+'page arguments' => array('startup_scorecard_form', 1),
+'access callback' => 'startup_scorecard_access',
+'access arguments' => array(1),
+'file' => 'startup_scorecard.admin.inc',
+'type' => MENU_LOCAL_TASK,
+'weight' => 10,
+);
+
+// View all scores for a startup
+$items['node/%node/scores'] = array(
+'title' => 'View All Scores',
+'page callback' => 'startup_scorecard_view_all_scores',
+'page arguments' => array(1),
+'access callback' => 'startup_scorecard_access',
+'access arguments' => array(1),
+'file' => 'startup_scorecard.pages.inc',
+'type' => MENU_LOCAL_TASK,
+'weight' => 11,
+);
+
+// Admin report
+$items['admin/reports/startup-scores'] = array(
+'title' => 'Startup Scores Report',
+'description' => 'View all startup scores and ratings',
+'page callback' => 'startup_scorecard_report_page',
+'access arguments' => array('administer content'),
+'file' => 'startup_scorecard.pages.inc',
+'type' => MENU_NORMAL_ITEM,
+);
+
+return $items;
+}
+
+/**
+ * Access callback for scoring
+ */
+function startup_scorecard_access($node) {
+// Only allow on startup_idea nodes
+if ($node->type != 'startup_idea') {
+return FALSE;
+}
+
+// Allow admins and mentors
+global $user;
+
+if (user_access('administer content')) {
+return TRUE;
+}
+
+// Check if user has mentor role
+$mentor_role = user_role_load_by_name('Mentor');
+if ($mentor_role && isset($user->roles[$mentor_role->rid])) {
+return TRUE;
+}
+
+return FALSE;
+}
+
+/**
+ * Implements hook_node_view()
+ */
+function startup_scorecard_node_view($node, $view_mode, $langcode) {
+if ($node->type == 'startup_idea' && $view_mode == 'full') {
+if (startup_scorecard_access($node)) {
+    
+    // Get current score
+    $score_data = startup_scorecard_get_average_score($node->nid);
+    
+    $node->content['startup_scorecard'] = array(
+    '#markup' => theme('startup_scorecard_display', array(
+        'node' => $node,
+        'score_data' => $score_data,
+    )),
+    '#weight' => 50,
+    );
+    
+    drupal_add_css(drupal_get_path('module', 'startup_scorecard') . '/startup_scorecard.css');
+}
+}
+}
+
+/**
+ * Implements hook_theme()
+ */
+function startup_scorecard_theme() {
+return array(
+'startup_scorecard_display' => array(
+    'variables' => array('node' => NULL, 'score_data' => NULL),
+),
+);
+}
+
+/**
+ * Theme function for scorecard display
+ */
+function theme_startup_scorecard_display($variables) {
+$node = $variables['node'];
+$score_data = $variables['score_data'];
+
+$output = '<div class="startup-scorecard-widget">';
+$output .= '<h3>📊 Startup Scorecard</h3>';
+
+if (empty($score_data)) {
+$output .= '<p class="no-score">This startup has not been scored yet.</p>';
+$output .= '<a href="/drupal7/?q=node/' . $node->nid . '/score" class="button score-btn">⭐ Score This Startup</a>';
+} 
+else {
+$total = $score_data['total_score'];
+$badge = startup_scorecard_get_grade_badge($total);
+
+$output .= '<div class="overall-score">';
+$output .= '<div class="score-number">' . $total . '/100</div>';
+$output .= '<div class="score-badge">' . $badge . '</div>';
+$output .= '</div>';
+
+$output .= '<div class="score-breakdown">';
+$output .= startup_scorecard_render_bar('Team Strength', $score_data['team_strength'], 25);
+$output .= startup_scorecard_render_bar('Market Opportunity', $score_data['market_opportunity'], 25);
+$output .= startup_scorecard_render_bar('Business Model', $score_data['business_model'], 25);
+$output .= startup_scorecard_render_bar('Technical Feasibility', $score_data['technical_feasibility'], 25);
+$output .= '</div>';
+
+$output .= '<div class="score-meta">';
+$output .= '<small>Based on ' . $score_data['num_ratings'] . ' rating(s)</small> | ';
+$output .= '<a href="/drupal7/?q=node/' . $node->nid . '/scores">View All Scores</a> | ';
+$output .= '<a href="/drupal7/?q=node/' . $node->nid . '/score">Update Score</a>';
+$output .= '</div>';
+}
+
+$output .= '</div>';
+
+return $output;
+}
+
+/**
+ * Render a progress bar
+ */
+function startup_scorecard_render_bar($label, $value, $max) {
+$percentage = ($value / $max) * 100;
+
+$bar_class = 'bar-low';
+if ($percentage >= 80) {
+$bar_class = 'bar-high';
+} 
+elseif ($percentage >= 60) {
+$bar_class = 'bar-medium';
+}
+
+$output = '<div class="score-row">';
+$output .= '<div class="score-label">' . $label . '</div>';
+$output .= '<div class="score-bar-container">';
+$output .= '<div class="score-bar ' . $bar_class . '" style="width: ' . $percentage . '%"></div>';
+$output .= '</div>';
+$output .= '<div class="score-value">' . $value . '/' . $max . '</div>';
+$output .= '</div>';
+
+return $output;
+}
+
+/**
+ * Get grade badge based on score
+ */
+function startup_scorecard_get_grade_badge($score) {
+if ($score >= 90) {
+return '<span class="grade-a">A+ Exceptional</span>';
+} 
+elseif ($score >= 80) {
+return '<span class="grade-a">A Excellent</span>';
+} 
+elseif ($score >= 70) {
+return '<span class="grade-b">B Good</span>';
+} 
+elseif ($score >= 60) {
+return '<span class="grade-c">C Average</span>';
+} 
+else {
+return '<span class="grade-d">D Below Average</span>';
+}
+}
+
+/**
+ * Get average score for a startup
+ */
+function startup_scorecard_get_average_score($nid) {
+$query = db_select('startup_scorecard', 's')
+->condition('startup_nid', $nid);
+
+$query->addExpression('AVG(team_strength)', 'team_strength');
+$query->addExpression('AVG(market_opportunity)', 'market_opportunity');
+$query->addExpression('AVG(business_model)', 'business_model');
+$query->addExpression('AVG(technical_feasibility)', 'technical_feasibility');
+$query->addExpression('AVG(total_score)', 'total_score');
+$query->addExpression('COUNT(*)', 'num_ratings');
+
+$result = $query->execute()->fetchAssoc();
+
+if ($result && $result['num_ratings'] > 0) {
+return array(
+    'team_strength' => round($result['team_strength']),
+    'market_opportunity' => round($result['market_opportunity']),
+    'business_model' => round($result['business_model']),
+    'technical_feasibility' => round($result['technical_feasibility']),
+    'total_score' => round($result['total_score']),
+    'num_ratings' => $result['num_ratings'],
+);
+}
+
+return NULL;
+}
+
+/**
+ * Implements hook_help()
+ */
+function startup_scorecard_help($path, $arg) {
+switch ($path) {
+case 'admin/help#startup_scorecard':
+    return '<p>' . t('Rate startups on multiple criteria including team strength, market opportunity, business model, and technical feasibility.') . '</p>';
+}
+}

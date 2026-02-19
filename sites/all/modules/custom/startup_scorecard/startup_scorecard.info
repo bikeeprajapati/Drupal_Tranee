@@ -1,0 +1,12 @@
+name = Startup Scorecard
+description = Rate and score startups on multiple criteria with visual indicators and progress tracking.
+core = 7.x
+package = SIMS Custom Modules
+version = 7.x-1.0
+
+files[] = startup_scorecard.module
+files[] = startup_scorecard.install
+files[] = startup_scorecard.admin.inc
+files[] = startup_scorecard.pages.inc
+
+dependencies[] = node
