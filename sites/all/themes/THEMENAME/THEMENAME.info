@@ -1,0 +1,10 @@
+name = My Theme
+core = 7.x
+base theme = bootstrap
+description = Custom subtheme for InnovateX SIMS
+stylesheets[all][] = css/global.css
+stylesheets[all][] = css/dashboard.css
+stylesheets[all][] = css/founder.css
+stylesheets[all][] = css/mentor.css
+stylesheets[all][] = css/investor.css
+stylesheets[all][] = css/forms.css

@@ -1,0 +1,310 @@
+<?php
+/**
+ * @file
+ * Install, update and uninstall functions for Progress Tracker module.
+ */
+
+/**
+ * Implements hook_schema().
+ */
+function progress_tracker_schema() {
+  $schema = array();
+
+  // Milestones table
+  $schema['progress_milestones'] = array(
+    'description' => 'Stores milestone definitions',
+    'fields' => array(
+      'milestone_id' => array(
+        'type' => 'serial',
+        'not null' => TRUE,
+        'description' => 'Primary key: unique milestone ID',
+      ),
+      'title' => array(
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+        'description' => 'Milestone title',
+      ),
+      'description' => array(
+        'type' => 'text',
+        'size' => 'big',
+        'description' => 'Milestone description',
+      ),
+      'category' => array(
+        'type' => 'varchar',
+        'length' => 100,
+        'description' => 'Category: Product, Business, Fundraising, Team, Marketing',
+      ),
+      'is_template' => array(
+        'type' => 'int',
+        'size' => 'tiny',
+        'default' => 0,
+        'description' => '1 if this is a template milestone, 0 if custom',
+      ),
+      'default_duration_days' => array(
+        'type' => 'int',
+        'default' => 30,
+        'description' => 'Default duration in days',
+      ),
+      'created' => array(
+        'type' => 'int',
+        'not null' => TRUE,
+        'default' => 0,
+        'description' => 'Timestamp when created',
+      ),
+      'created_by' => array(
+        'type' => 'int',
+        'not null' => TRUE,
+        'default' => 0,
+        'description' => 'User ID who created this',
+      ),
+    ),
+    'primary key' => array('milestone_id'),
+    'indexes' => array(
+      'category' => array('category'),
+      'is_template' => array('is_template'),
+    ),
+  );
+
+  // Assigned milestones table
+  $schema['progress_milestone_assignments'] = array(
+    'description' => 'Milestones assigned to specific startups',
+    'fields' => array(
+      'assignment_id' => array(
+        'type' => 'serial',
+        'not null' => TRUE,
+        'description' => 'Primary key: unique assignment ID',
+      ),
+      'startup_nid' => array(
+        'type' => 'int',
+        'not null' => TRUE,
+        'description' => 'Startup node ID',
+      ),
+      'milestone_id' => array(
+        'type' => 'int',
+        'not null' => TRUE,
+        'description' => 'Reference to milestone ID',
+      ),
+      'milestone_title' => array(
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+        'description' => 'Snapshot of milestone title',
+      ),
+      'target_date' => array(
+        'type' => 'int',
+        'description' => 'Target completion date (timestamp)',
+      ),
+      'actual_date' => array(
+        'type' => 'int',
+        'description' => 'Actual completion date (timestamp)',
+      ),
+      'status' => array(
+        'type' => 'varchar',
+        'length' => 50,
+        'not null' => TRUE,
+        'default' => 'not_started',
+        'description' => 'Status: not_started, in_progress, completed, overdue, delayed',
+      ),
+      'completion_percentage' => array(
+        'type' => 'int',
+        'size' => 'tiny',
+        'default' => 0,
+        'description' => 'Completion percentage (0-100)',
+      ),
+      'priority' => array(
+        'type' => 'varchar',
+        'length' => 20,
+        'default' => 'medium',
+        'description' => 'Priority: low, medium, high, critical',
+      ),
+      'notes' => array(
+        'type' => 'text',
+        'size' => 'big',
+        'description' => 'Progress notes and comments',
+      ),
+      'assigned_by' => array(
+        'type' => 'int',
+        'not null' => TRUE,
+        'description' => 'User ID who assigned this',
+      ),
+      'assigned_date' => array(
+        'type' => 'int',
+        'not null' => TRUE,
+        'description' => 'When this was assigned',
+      ),
+      'last_updated' => array(
+        'type' => 'int',
+        'not null' => TRUE,
+        'description' => 'Last update timestamp',
+      ),
+      'updated_by' => array(
+        'type' => 'int',
+        'description' => 'User ID who last updated this',
+      ),
+    ),
+    'primary key' => array('assignment_id'),
+    'indexes' => array(
+      'startup_nid' => array('startup_nid'),
+      'milestone_id' => array('milestone_id'),
+      'status' => array('status'),
+      'target_date' => array('target_date'),
+      'priority' => array('priority'),
+    ),
+  );
+
+  // Progress updates history table
+  $schema['progress_updates'] = array(
+    'description' => 'History of progress updates',
+    'fields' => array(
+      'update_id' => array(
+        'type' => 'serial',
+        'not null' => TRUE,
+        'description' => 'Primary key',
+      ),
+      'assignment_id' => array(
+        'type' => 'int',
+        'not null' => TRUE,
+        'description' => 'Reference to assignment',
+      ),
+      'old_status' => array(
+        'type' => 'varchar',
+        'length' => 50,
+        'description' => 'Previous status',
+      ),
+      'new_status' => array(
+        'type' => 'varchar',
+        'length' => 50,
+        'not null' => TRUE,
+        'description' => 'New status',
+      ),
+      'old_percentage' => array(
+        'type' => 'int',
+        'size' => 'tiny',
+        'default' => 0,
+        'description' => 'Previous completion %',
+      ),
+      'new_percentage' => array(
+        'type' => 'int',
+        'size' => 'tiny',
+        'not null' => TRUE,
+        'description' => 'New completion %',
+      ),
+      'update_note' => array(
+        'type' => 'text',
+        'description' => 'Update notes',
+      ),
+      'updated_by' => array(
+        'type' => 'int',
+        'not null' => TRUE,
+        'description' => 'User who made the update',
+      ),
+      'update_timestamp' => array(
+        'type' => 'int',
+        'not null' => TRUE,
+        'description' => 'When this update was made',
+      ),
+    ),
+    'primary key' => array('update_id'),
+    'indexes' => array(
+      'assignment_id' => array('assignment_id'),
+      'update_timestamp' => array('update_timestamp'),
+    ),
+  );
+
+  return $schema;
+}
+
+/**
+ * Implements hook_install().
+ */
+function progress_tracker_install() {
+  // Insert default milestone templates
+  $templates = array(
+    array(
+      'title' => 'Product MVP Launch',
+      'description' => 'Launch minimum viable product to initial users',
+      'category' => 'Product',
+      'is_template' => 1,
+      'default_duration_days' => 90,
+    ),
+    array(
+      'title' => 'First Customer/Revenue',
+      'description' => 'Acquire first paying customer',
+      'category' => 'Business',
+      'is_template' => 1,
+      'default_duration_days' => 60,
+    ),
+    array(
+      'title' => 'Product-Market Fit Validation',
+      'description' => 'Validate product-market fit with user feedback',
+      'category' => 'Product',
+      'is_template' => 1,
+      'default_duration_days' => 120,
+    ),
+    array(
+      'title' => 'Seed Funding Secured',
+      'description' => 'Close seed funding round',
+      'category' => 'Fundraising',
+      'is_template' => 1,
+      'default_duration_days' => 180,
+    ),
+    array(
+      'title' => 'Core Team Hired',
+      'description' => 'Hire key team members (3-5 people)',
+      'category' => 'Team',
+      'is_template' => 1,
+      'default_duration_days' => 90,
+    ),
+    array(
+      'title' => 'Marketing Strategy Launched',
+      'description' => 'Launch initial marketing campaigns',
+      'category' => 'Marketing',
+      'is_template' => 1,
+      'default_duration_days' => 60,
+    ),
+    array(
+      'title' => '100 Active Users',
+      'description' => 'Reach 100 active users milestone',
+      'category' => 'Business',
+      'is_template' => 1,
+      'default_duration_days' => 90,
+    ),
+    array(
+      'title' => 'Beta Testing Complete',
+      'description' => 'Complete beta testing phase with user feedback',
+      'category' => 'Product',
+      'is_template' => 1,
+      'default_duration_days' => 45,
+    ),
+    array(
+      'title' => 'Break-even Point Reached',
+      'description' => 'Achieve break-even on monthly operating costs',
+      'category' => 'Business',
+      'is_template' => 1,
+      'default_duration_days' => 180,
+    ),
+    array(
+      'title' => 'Series A Fundraising Started',
+      'description' => 'Begin Series A fundraising process',
+      'category' => 'Fundraising',
+      'is_template' => 1,
+      'default_duration_days' => 120,
+    ),
+  );
+
+  foreach ($templates as $template) {
+    $template['created'] = REQUEST_TIME;
+    $template['created_by'] = 1;
+    drupal_write_record('progress_milestones', $template);
+  }
+
+  drupal_set_message(t('Progress Tracker module installed successfully with 10 default milestone templates.'));
+}
+
+/**
+ * Implements hook_uninstall().
+ */
+function progress_tracker_uninstall() {
+  drupal_set_message(t('Progress Tracker module uninstalled.'));
+}

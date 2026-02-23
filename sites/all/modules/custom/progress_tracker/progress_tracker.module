@@ -1,0 +1,230 @@
+<?php
+/**
+ * @file
+ * Main module file for Progress Tracker.
+ */
+
+/**
+ * Implements hook_menu().
+ */
+function progress_tracker_menu() {
+  $items = array();
+
+  $items['admin/config/sims/milestones'] = array(
+    'title' => 'Milestone Templates',
+    'description' => 'Manage milestone templates',
+    'page callback' => 'progress_tracker_milestone_templates_page',
+    'access arguments' => array('administer progress tracker'),
+    'file' => 'progress_tracker.admin.inc',
+    'type' => MENU_NORMAL_ITEM,
+  );
+
+  $items['admin/config/sims/milestones/add'] = array(
+    'title' => 'Add Milestone Template',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('progress_tracker_milestone_template_form'),
+    'access arguments' => array('administer progress tracker'),
+    'file' => 'progress_tracker.admin.inc',
+    'type' => MENU_LOCAL_ACTION,
+  );
+
+  $items['admin/config/sims/milestones/%/edit'] = array(
+    'title' => 'Edit Milestone Template',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('progress_tracker_milestone_template_form', 4),
+    'access arguments' => array('administer progress tracker'),
+    'file' => 'progress_tracker.admin.inc',
+  );
+
+  $items['admin/config/sims/milestones/%/delete'] = array(
+    'title' => 'Delete Milestone Template',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('progress_tracker_milestone_template_delete_form', 4),
+    'access arguments' => array('administer progress tracker'),
+    'file' => 'progress_tracker.admin.inc',
+  );
+
+  $items['node/%node/progress'] = array(
+    'title' => 'Progress Tracker',
+    'page callback' => 'progress_tracker_startup_view',
+    'page arguments' => array(1),
+    'access callback' => 'progress_tracker_startup_access',
+    'access arguments' => array(1),
+    'file' => 'progress_tracker.pages.inc',
+    'type' => MENU_LOCAL_TASK,
+    'weight' => 5,
+  );
+
+  $items['node/%node/progress/assign'] = array(
+    'title' => 'Assign Milestone',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('progress_tracker_assign_milestone_form', 1),
+    'access callback' => 'progress_tracker_assign_access',
+    'access arguments' => array(1),
+    'file' => 'progress_tracker.pages.inc',
+    'type' => MENU_LOCAL_ACTION,
+  );
+
+  $items['progress/milestone/%/update'] = array(
+    'title' => 'Update Progress',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('progress_tracker_update_form', 2),
+    'access callback' => 'progress_tracker_update_access',
+    'access arguments' => array(2),
+    'file' => 'progress_tracker.pages.inc',
+  );
+
+  $items['progress/milestone/%/delete'] = array(
+    'title' => 'Remove Milestone',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('progress_tracker_delete_assignment_form', 2),
+    'access callback' => 'progress_tracker_update_access',
+    'access arguments' => array(2),
+    'file' => 'progress_tracker.pages.inc',
+  );
+
+  $items['admin/reports/progress-tracker'] = array(
+    'title' => 'Progress Tracker Report',
+    'description' => 'View overall progress across all startups',
+    'page callback' => 'progress_tracker_admin_report',
+    'access arguments' => array('access progress reports'),
+    'file' => 'progress_tracker.admin.inc',
+    'type' => MENU_NORMAL_ITEM,
+  );
+
+  return $items;
+}
+
+/**
+ * Implements hook_permission().
+ */
+function progress_tracker_permission() {
+  return array(
+    'administer progress tracker' => array(
+      'title' => t('Administer Progress Tracker'),
+      'description' => t('Manage milestone templates and settings'),
+    ),
+    'assign milestones' => array(
+      'title' => t('Assign Milestones'),
+      'description' => t('Assign milestones to startups'),
+    ),
+    'update own progress' => array(
+      'title' => t('Update Own Progress'),
+      'description' => t('Update progress on own startup milestones'),
+    ),
+    'update all progress' => array(
+      'title' => t('Update All Progress'),
+      'description' => t('Update progress on any startup milestone'),
+    ),
+    'access progress reports' => array(
+      'title' => t('Access Progress Reports'),
+      'description' => t('View progress tracking reports'),
+    ),
+  );
+}
+
+function progress_tracker_startup_access($node) {
+  global $user;
+  if ($node->type != 'startup_idea') return FALSE;
+  if (user_access('administer progress tracker')) return TRUE;
+  if ($node->uid == $user->uid && user_access('update own progress')) return TRUE;
+  if (user_access('access progress reports')) return TRUE;
+  return FALSE;
+}
+
+function progress_tracker_assign_access($node) {
+  if ($node->type != 'startup_idea') return FALSE;
+  return user_access('assign milestones') || user_access('administer progress tracker');
+}
+
+function progress_tracker_update_access($assignment_id) {
+  global $user;
+  $assignment = progress_tracker_load_assignment($assignment_id);
+  if (!$assignment) return FALSE;
+  if (user_access('update all progress')) return TRUE;
+  $startup = node_load($assignment->startup_nid);
+  if ($startup && $startup->uid == $user->uid && user_access('update own progress')) return TRUE;
+  return FALSE;
+}
+
+function progress_tracker_load_assignment($assignment_id) {
+  return db_select('progress_milestone_assignments', 'pma')
+    ->fields('pma')
+    ->condition('assignment_id', $assignment_id)
+    ->execute()
+    ->fetchObject();
+}
+
+function progress_tracker_load_startup_milestones($startup_nid) {
+  return db_select('progress_milestone_assignments', 'pma')
+    ->fields('pma')
+    ->condition('startup_nid', $startup_nid)
+    ->orderBy('target_date', 'ASC')
+    ->execute()
+    ->fetchAll();
+}
+
+function progress_tracker_load_milestone_template($milestone_id) {
+  return db_select('progress_milestones', 'pm')
+    ->fields('pm')
+    ->condition('milestone_id', $milestone_id)
+    ->execute()
+    ->fetchObject();
+}
+
+function progress_tracker_get_templates($category = NULL) {
+  $query = db_select('progress_milestones', 'pm')
+    ->fields('pm')
+    ->condition('is_template', 1);
+  if ($category) $query->condition('category', $category);
+  $query->orderBy('category', 'ASC')->orderBy('title', 'ASC');
+  return $query->execute()->fetchAll();
+}
+
+function progress_tracker_get_startup_stats($startup_nid) {
+  $milestones = progress_tracker_load_startup_milestones($startup_nid);
+  $stats = array('total' => count($milestones), 'completed' => 0, 'in_progress' => 0, 'not_started' => 0, 'overdue' => 0, 'avg_completion' => 0, 'on_track' => 0);
+  $total_percentage = 0;
+  $current_time = REQUEST_TIME;
+  foreach ($milestones as $milestone) {
+    $total_percentage += $milestone->completion_percentage;
+    switch ($milestone->status) {
+      case 'completed': $stats['completed']++; break;
+      case 'in_progress': $stats['in_progress']++; break;
+      case 'not_started': $stats['not_started']++; break;
+    }
+    if ($milestone->target_date && $milestone->target_date < $current_time && $milestone->status != 'completed') $stats['overdue']++;
+    if ($milestone->completion_percentage >= 50 || $milestone->status == 'completed') $stats['on_track']++;
+  }
+  if ($stats['total'] > 0) $stats['avg_completion'] = round($total_percentage / $stats['total']);
+  return $stats;
+}
+
+function progress_tracker_theme() {
+  return array(
+    'progress_tracker_timeline' => array('variables' => array('milestones' => array(), 'startup_nid' => NULL), 'file' => 'progress_tracker.pages.inc'),
+    'progress_tracker_stats_widget' => array('variables' => array('stats' => array()), 'file' => 'progress_tracker.pages.inc'),
+  );
+}
+
+function progress_tracker_node_view($node, $view_mode, $langcode) {
+  if ($node->type == 'startup_idea' && $view_mode == 'full' && progress_tracker_startup_access($node)) {
+    $stats = progress_tracker_get_startup_stats($node->nid);
+    $node->content['progress_tracker_widget'] = array('#markup' => theme('progress_tracker_stats_widget', array('stats' => $stats)), '#weight' => 10);
+  }
+}
+
+function progress_tracker_mail($key, &$message, $params) {
+  switch ($key) {
+    case 'milestone_assigned':
+      $message['subject'] = t('New Milestone Assigned: @milestone', array('@milestone' => $params['milestone_title']));
+      $message['body'][] = t('A new milestone has been assigned to your startup "@startup":', array('@startup' => $params['startup_title']));
+      $message['body'][] = '';
+      $message['body'][] = t('Milestone: @milestone', array('@milestone' => $params['milestone_title']));
+      $message['body'][] = t('Target Date: @date', array('@date' => $params['target_date']));
+      $message['body'][] = t('Priority: @priority', array('@priority' => $params['priority']));
+      $message['body'][] = '';
+      $message['body'][] = t('View and update your progress: @url', array('@url' => $params['url']));
+      break;
+  }
+}

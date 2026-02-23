@@ -1,0 +1,35 @@
+.investor-hero {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-bottom: 24px; padding: 30px 40px;
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0d7377 100%);
+  border-radius: 16px; border: 1px solid rgba(255,255,255,0.2);
+}
+
+.investor-hero .hero-content { flex: 1; }
+.investor-hero .hero-title { display: flex; flex-direction: column; margin: 0 0 10px 0; line-height: 1.2; }
+
+.investor-hero .gradient-text {
+  font-size: 36px; font-weight: 800;
+  background: linear-gradient(135deg, #f6d365, #fda085);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+}
+
+.investor-hero .subtitle { font-size: 20px; color: rgba(255,255,255,0.9); font-weight: 600; margin-top: 5px; }
+.investor-hero .hero-description { color: rgba(255,255,255,0.7); font-size: 15px; margin: 10px 0 0 0; }
+
+.view-investor-dashboard table {
+  width: 100%; border-collapse: separate; border-spacing: 0;
+  background: #fff; border-radius: 16px; overflow: hidden;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.08); margin-top: 20px;
+}
+
+.view-investor-dashboard thead { background: linear-gradient(135deg, #f6d365, #fda085); }
+.view-investor-dashboard th { color: #1a1a2e !important; padding: 16px 20px; font-weight: 700; text-align: left; font-size: 12px; text-transform: uppercase; letter-spacing: 0.1em; }
+.view-investor-dashboard td { padding: 16px 20px; border-bottom: 1px solid #f3f4f6; font-size: 14px; color: #374151; }
+.view-investor-dashboard tbody tr:last-child td { border-bottom: none; }
+.view-investor-dashboard tbody tr:hover { background: #fffaf0; }
+.view-investor-dashboard .views-field-title a { color: #c05621; font-weight: 600; text-decoration: none; }
+
+@media (max-width: 768px) {
+  .investor-hero { flex-direction: column; align-items: flex-start; gap: 20px; }
+}

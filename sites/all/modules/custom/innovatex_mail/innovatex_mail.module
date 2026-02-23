@@ -1,0 +1,26 @@
+<?php
+
+/**
+ * Implements hook_mail().
+ */
+function innovatex_mail_mail($key, &$message, $params) {
+  $message['subject'] = $params['subject'];
+  $message['body'][] = $params['body'];
+}
+
+/**
+ * Send email to all users with a specific role.
+ */
+function innovatex_mail_send_to_role($role_id, $subject, $body) {
+  $query = db_query("SELECT u.mail, u.name FROM {users} u 
+    INNER JOIN {users_roles} ur ON u.uid = ur.uid 
+    WHERE ur.rid = :rid", array(':rid' => $role_id));
+  
+  foreach ($query as $user) {
+    $params = array(
+      'subject' => $subject,
+      'body' => "Hello " . $user->name . ",\n\n" . $body,
+    );
+    drupal_mail('innovatex_mail', 'notify', $user->mail, language_default(), $params);
+  }
+}

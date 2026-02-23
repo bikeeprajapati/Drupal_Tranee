@@ -1,0 +1,14 @@
+name = Progress Tracker
+description = Track startup progress through milestones with visual timelines and notifications
+core = 7.x
+package = SIMS Custom Modules
+version = 7.x-1.0
+
+dependencies[] = node
+dependencies[] = field
+dependencies[] = date
+
+files[] = progress_tracker.module
+files[] = progress_tracker.install
+files[] = progress_tracker.admin.inc
+files[] = progress_tracker.pages.inc

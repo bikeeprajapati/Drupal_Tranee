@@ -213,4 +213,6 @@ multipliers[screen-lg-min][] = 2x
 version = "7.x-3.27"
 core = "7.x"
 project = "bootstrap"
-datestamp = "1689027019"
+datestamp = "1689027019";
+
+stylesheets[all][] = css/dashboard.css

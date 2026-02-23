@@ -1,0 +1,4 @@
+name = InnovateX Mail
+description = Custom mail handler for InnovateX SIMS
+core = 7.x
+package = Custom
