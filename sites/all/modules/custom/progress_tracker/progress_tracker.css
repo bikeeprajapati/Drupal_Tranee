@@ -1,35 +1,257 @@
-.progress-stats-widget{background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);border-radius:16px;padding:30px;margin-bottom:30px;color:white;box-shadow:0 10px 30px rgba(0,0,0,0.2)}
-.progress-stats-widget h2{margin:0 0 20px 0;color:white;font-size:24px;font-weight:700}
-.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:20px}
-.stat-box{background:rgba(255,255,255,0.15);backdrop-filter:blur(10px);border-radius:12px;padding:20px;text-align:center;border:1px solid rgba(255,255,255,0.2);transition:transform 0.3s ease,box-shadow 0.3s ease}
-.stat-box:hover{transform:translateY(-5px);box-shadow:0 8px 20px rgba(0,0,0,0.3)}
-.stat-label{font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:1px;opacity:0.9;margin-bottom:8px}
-.stat-value{font-size:36px;font-weight:800;line-height:1;margin-bottom:10px}
-.stat-bar{height:6px;background:rgba(255,255,255,0.2);border-radius:3px;overflow:hidden}
-.stat-fill{height:100%;background:white;border-radius:3px;transition:width 0.5s ease}
-.progress-timeline{position:relative;padding-left:40px;margin-top:30px}
-.progress-timeline::before{content:'';position:absolute;left:15px;top:0;bottom:0;width:3px;background:linear-gradient(180deg,#667eea 0%,#764ba2 100%)}
-.milestone-item{position:relative;background:white;border-radius:12px;padding:20px;margin-bottom:20px;box-shadow:0 4px 15px rgba(0,0,0,0.08);transition:all 0.3s ease}
-.milestone-item:hover{box-shadow:0 8px 25px rgba(0,0,0,0.15);transform:translateX(5px)}
-.milestone-status-icon{position:absolute;left:-33px;top:20px;width:34px;height:34px;border-radius:50%;background:white;border:3px solid #667eea;display:flex;align-items:center;justify-content:center;font-weight:bold;font-size:14px;z-index:10}
-.status-completed .milestone-status-icon{background:#43e97b;border-color:#38f9d7}
-.status-completed .icon-complete{color:white;font-size:18px}
-.status-in-progress .milestone-status-icon{background:#4facfe;border-color:#00f2fe;color:white}
-.overdue .milestone-status-icon{background:#fa709a;border-color:#fee140;animation:pulse 2s infinite}
-@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.1)}}
-.milestone-content{padding-left:10px}
-.milestone-title{margin:0 0 15px 0;font-size:20px;font-weight:700;color:#1f2937}
-.milestone-progress-bar{height:8px;background:#e5e7eb;border-radius:4px;overflow:hidden;margin-bottom:12px}
-.progress-fill{height:100%;background:linear-gradient(90deg,#667eea 0%,#764ba2 100%);border-radius:4px;transition:width 0.5s ease}
-.status-completed .progress-fill{background:linear-gradient(90deg,#43e97b 0%,#38f9d7 100%)}
-.milestone-meta{font-size:14px;color:#6b7280;margin-bottom:15px}
-.milestone-status{font-weight:600;padding:3px 10px;border-radius:12px;background:#e5e7eb;color:#374151}
-.status-completed .milestone-status{background:#d1fae5;color:#059669}
-.milestone-actions{display:flex;gap:10px;margin-top:15px}
-.milestone-actions .button{display:inline-block;padding:8px 16px;border-radius:8px;text-decoration:none;font-weight:600;font-size:14px;transition:all 0.3s ease}
-.button-update{background:#667eea;color:white}
-.button-update:hover{background:#5568d3;transform:translateY(-2px)}
-.no-milestones{text-align:center;padding:60px 20px;font-size:18px;color:#6b7280;background:#f9fafb;border-radius:12px;border:2px dashed #d1d5db}
-.progress-bar-container{width:200px;height:24px;background:#e5e7eb;border-radius:12px;position:relative;overflow:hidden}
-.progress-bar{height:100%;background:linear-gradient(90deg,#667eea 0%,#764ba2 100%);border-radius:12px;transition:width 0.5s ease}
-.progress-text{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-weight:700;font-size:12px;color:#374151;z-index:10}
+.progress-stats-widget {
+background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+border-radius: 16px;
+padding: 30px;
+margin-bottom: 30px;
+color: white;
+box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+}
+
+.progress-stats-widget h2 {
+margin: 0 0 20px 0;
+color: white;
+font-size: 24px;
+font-weight: 700;
+}
+
+.stats-grid {
+display: grid;
+grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+gap: 20px;
+}
+
+.stat-box {
+background: rgba(255, 255, 255, 0.15);
+backdrop-filter: blur(10px);
+border-radius: 12px;
+padding: 20px;
+text-align: center;
+border: 1px solid rgba(255, 255, 255, 0.2);
+transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.stat-box:hover {
+transform: translateY(-5px);
+box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+}
+
+.stat-label {
+font-size: 12px;
+font-weight: 600;
+text-transform: uppercase;
+letter-spacing: 1px;
+opacity: 0.9;
+margin-bottom: 8px;
+}
+
+.stat-value {
+font-size: 36px;
+font-weight: 800;
+line-height: 1;
+margin-bottom: 10px;
+}
+
+.stat-bar {
+height: 6px;
+background: rgba(255, 255, 255, 0.2);
+border-radius: 3px;
+overflow: hidden;
+}
+
+.stat-fill {
+height: 100%;
+background: white;
+border-radius: 3px;
+transition: width 0.5s ease;
+}
+
+.progress-timeline {
+position: relative;
+padding-left: 40px;
+margin-top: 30px;
+}
+
+.progress-timeline::before {
+content: '';
+position: absolute;
+left: 15px;
+top: 0;
+bottom: 0;
+width: 3px;
+background: linear-gradient(180deg, #667eea 0%, #764ba2 100%);
+}
+
+.milestone-item {
+position: relative;
+background: white;
+border-radius: 12px;
+padding: 20px;
+margin-bottom: 20px;
+box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+transition: all 0.3s ease;
+}
+
+.milestone-item:hover {
+box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+transform: translateX(5px);
+}
+
+.milestone-status-icon {
+position: absolute;
+left: -33px;
+top: 20px;
+width: 34px;
+height: 34px;
+border-radius: 50%;
+background: white;
+border: 3px solid #667eea;
+display: flex;
+align-items: center;
+justify-content: center;
+font-weight: bold;
+font-size: 14px;
+z-index: 10;
+}
+
+.status-completed .milestone-status-icon {
+background: #43e97b;
+border-color: #38f9d7;
+}
+
+.status-completed .icon-complete {
+color: white;
+font-size: 18px;
+}
+
+.status-in-progress .milestone-status-icon {
+background: #4facfe;
+border-color: #00f2fe;
+color: white;
+}
+
+.overdue .milestone-status-icon {
+background: #fa709a;
+border-color: #fee140;
+animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+0%, 100% {
+transform: scale(1);
+}
+50% {
+transform: scale(1.1);
+}
+}
+
+.milestone-content {
+padding-left: 10px;
+}
+
+.milestone-title {
+margin: 0 0 15px 0;
+font-size: 20px;
+font-weight: 700;
+color: #1f2937;
+}
+
+.milestone-progress-bar {
+height: 8px;
+background: #e5e7eb;
+border-radius: 4px;
+overflow: hidden;
+margin-bottom: 12px;
+}
+
+.progress-fill {
+height: 100%;
+background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+border-radius: 4px;
+transition: width 0.5s ease;
+}
+
+.status-completed .progress-fill {
+background: linear-gradient(90deg, #43e97b 0%, #38f9d7 100%);
+}
+
+.milestone-meta {
+font-size: 14px;
+color: #6b7280;
+margin-bottom: 15px;
+}
+
+.milestone-status {
+font-weight: 600;
+padding: 3px 10px;
+border-radius: 12px;
+background: #e5e7eb;
+color: #374151;
+}
+
+.status-completed .milestone-status {
+background: #d1fae5;
+color: #059669;
+}
+
+.milestone-actions {
+display: flex;
+gap: 10px;
+margin-top: 15px;
+}
+
+.milestone-actions .button {
+display: inline-block;
+padding: 8px 16px;
+border-radius: 8px;
+text-decoration: none;
+font-weight: 600;
+font-size: 14px;
+transition: all 0.3s ease;
+}
+
+.button-update {
+background: #667eea;
+color: white;
+}
+
+.button-update:hover {
+background: #5568d3;
+transform: translateY(-2px);
+}
+
+.no-milestones {
+text-align: center;
+padding: 60px 20px;
+font-size: 18px;
+color: #6b7280;
+background: #f9fafb;
+border-radius: 12px;
+border: 2px dashed #d1d5db;
+}
+
+.progress-bar-container {
+width: 200px;
+height: 24px;
+background: #e5e7eb;
+border-radius: 12px;
+position: relative;
+overflow: hidden;
+}
+
+.progress-bar {
+height: 100%;
+background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+border-radius: 12px;
+transition: width 0.5s ease;
+}
+
+.progress-text {
+position: absolute;
+top: 50%;
+left: 50%;
+transform: translate(-50%, -50%);
+font-weight: 700;
+font-size: 12px;
+color: #374151;
+z-index: 10;
+}

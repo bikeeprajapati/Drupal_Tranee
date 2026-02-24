@@ -102,9 +102,9 @@ function progress_tracker_admin_report() {
   $query->fields('n', array('title'));
   $query->groupBy('pma.startup_nid');
   $query->groupBy('n.title');
+  $query->extend('PagerDefault')->limit(20);
   $startups = $query->execute()->fetchAll();
-  
-  if (empty($startups)) {
+    if (empty($startups)) {
     return '<p>' . t('No startups have assigned milestones yet.') . '</p>';
   }
   
@@ -117,6 +117,6 @@ function progress_tracker_admin_report() {
   }
   
   $header = array(t('Startup'), t('Total Milestones'), t('Overall Progress'), t('Status Summary'), t('Actions'));
-  $output = '<div class="progress-tracker-report"><h2>' . t('Progress Tracker - All Startups') . '</h2>' . theme('table', array('header' => $header, 'rows' => $rows, 'attributes' => array('class' => array('progress-report-table')))) . '</div>';
+  $output = '<div class="progress-tracker-report"><h2>' . t('Progress Tracker - All Startups') . '</h2>' . theme('table', array('header' => $header, 'rows' => $rows, 'attributes' => array('class' => array('progress-report-table')))) . theme('pager') . '</div>';
   return $output;
 }
