@@ -1,0 +1,10 @@
+name = Feedback Entity
+description = Simple custom entity for collecting feedback from founders
+core = 7.x
+package = SIMS Custom Modules
+version = 7.x-1.0
+
+dependencies[] = entity
+
+files[] = feedback_entity.module
+files[] = feedback_entity.install

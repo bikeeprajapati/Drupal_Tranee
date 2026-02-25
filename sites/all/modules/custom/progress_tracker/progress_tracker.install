@@ -308,3 +308,5 @@ function progress_tracker_install() {
 function progress_tracker_uninstall() {
   drupal_set_message(t('Progress Tracker module uninstalled.'));
 }
+//Full Cleanup
+//drupal_uninstall_schema('progress_tracker');

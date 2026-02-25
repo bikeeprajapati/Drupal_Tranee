@@ -1,0 +1,188 @@
+<?php
+/**
+ * @file
+ * Feedback custom entity.
+ */
+
+/**
+ * Implements hook_entity_info().
+ */
+function feedback_entity_entity_info() {
+  $info['feedback'] = array(
+    'label' => t('Feedback'),
+    'entity class' => 'Entity',
+    'controller class' => 'EntityAPIController',
+    'base table' => 'feedback',
+    'fieldable' => FALSE,
+    'entity keys' => array(
+      'id' => 'feedback_id',
+    ),
+    'module' => 'feedback_entity',
+    'access callback' => 'feedback_entity_access',
+  );
+  
+  return $info;
+}
+
+/**
+ * Access callback.
+ */
+function feedback_entity_access($op, $entity = NULL, $account = NULL) {
+  if ($op == 'create') {
+    return user_access('submit feedback', $account);
+  }
+  if ($op == 'view') {
+    return user_access('view feedback', $account);
+  }
+  return user_access('administer feedback', $account);
+}
+
+/**
+ * Implements hook_permission().
+ */
+function feedback_entity_permission() {
+  return array(
+    'submit feedback' => array(
+      'title' => t('Submit Feedback'),
+    ),
+    'view feedback' => array(
+      'title' => t('View Feedback'),
+    ),
+    'administer feedback' => array(
+      'title' => t('Administer Feedback'),
+    ),
+  );
+}
+
+/**
+ * Implements hook_menu().
+ */
+function feedback_entity_menu() {
+  $items = array();
+  
+  // Submit feedback form
+  $items['feedback/submit'] = array(
+    'title' => 'Submit Feedback',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('feedback_entity_submit_form'),
+    'access arguments' => array('submit feedback'),
+    'menu_name' => 'main-menu',
+  );
+  
+  // Admin view
+  $items['admin/content/feedback'] = array(
+    'title' => 'Feedback',
+    'description' => 'View feedback submissions',
+    'page callback' => 'feedback_entity_admin_page',
+    'access arguments' => array('administer feedback'),
+    'type' => MENU_LOCAL_TASK,
+  );
+  
+  return $items;
+}
+
+/**
+ * Submit feedback form.
+ */
+function feedback_entity_submit_form($form, &$form_state) {
+  $form['feedback_type'] = array(
+    '#type' => 'select',
+    '#title' => t('What are you giving feedback about?'),
+    '#required' => TRUE,
+    '#options' => array(
+      'mentor' => t('Mentor Session'),
+      'milestone' => t('Progress Milestone'),
+      'resource' => t('Resource/Document'),
+      'general' => t('General Feedback'),
+    ),
+  );
+  
+  $form['rating'] = array(
+    '#type' => 'select',
+    '#title' => t('Rating'),
+    '#required' => TRUE,
+    '#options' => array(
+      5 => t('⭐⭐⭐⭐⭐ Excellent'),
+      4 => t('⭐⭐⭐⭐ Good'),
+      3 => t('⭐⭐⭐ Average'),
+      2 => t('⭐⭐ Poor'),
+      1 => t('⭐ Very Poor'),
+    ),
+  );
+  
+  $form['comment'] = array(
+    '#type' => 'textarea',
+    '#title' => t('Your Feedback'),
+    '#required' => TRUE,
+    '#rows' => 5,
+  );
+  
+  $form['submit'] = array(
+    '#type' => 'submit',
+    '#value' => t('Submit Feedback'),
+  );
+  
+  return $form;
+}
+
+/**
+ * Submit handler.
+ */
+function feedback_entity_submit_form_submit($form, &$form_state) {
+  global $user;
+  
+  $feedback = entity_create('feedback', array(
+    'feedback_type' => $form_state['values']['feedback_type'],
+    'rating' => $form_state['values']['rating'],
+    'comment' => $form_state['values']['comment'],
+    'submitted_by' => $user->uid,
+    'created' => REQUEST_TIME,
+    'status' => 'new',
+  ));
+  
+  entity_save('feedback', $feedback);
+  
+  drupal_set_message(t('Thank you for your feedback!'));
+  $form_state['redirect'] = '<front>';
+}
+
+/**
+ * Admin page to view feedback.
+ */
+function feedback_entity_admin_page() {
+  $query = new EntityFieldQuery();
+  $result = $query
+    ->entityCondition('entity_type', 'feedback')
+    ->propertyOrderBy('created', 'DESC')
+    ->execute();
+  
+  if (empty($result['feedback'])) {
+    return '<p>' . t('No feedback submitted yet.') . '</p>';
+  }
+  
+  $feedbacks = entity_load('feedback', array_keys($result['feedback']));
+  
+  $rows = array();
+  foreach ($feedbacks as $feedback) {
+    $user = user_load($feedback->submitted_by);
+    $rows[] = array(
+      ucfirst($feedback->feedback_type),
+      str_repeat('⭐', $feedback->rating),
+      substr($feedback->comment, 0, 100) . '...',
+      $user->name,
+      format_date($feedback->created, 'short'),
+      ucfirst($feedback->status),
+    );
+  }
+  
+  $header = array(
+    t('Type'),
+    t('Rating'),
+    t('Comment'),
+    t('Submitted By'),
+    t('Date'),
+    t('Status'),
+  );
+  
+  return theme('table', array('header' => $header, 'rows' => $rows));
+}
