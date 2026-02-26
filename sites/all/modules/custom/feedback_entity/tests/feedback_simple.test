@@ -1,0 +1,95 @@
+<?php
+/**
+ * @file
+ * Simple Feedback Entity Test.
+ */
+
+class FeedbackEntitySimpleTest extends DrupalWebTestCase {
+  
+  public static function getInfo() {
+    return array(
+      'name' => 'Feedback Entity - Basic Test',
+      'description' => 'Test that founders can submit feedback and admins can view it.',
+      'group' => 'SIMS Tests',
+    );
+  }
+  
+  public function setUp() {
+    parent::setUp('entity', 'feedback_entity');
+    
+    // Create test users
+    $this->founder = $this->drupalCreateUser(array('submit feedback'));
+    $this->admin = $this->drupalCreateUser(array('administer feedback', 'view feedback'));
+  }
+  
+  /**
+   * Test 1: Founder can access and submit feedback form.
+   */
+  public function testFounderCanSubmitFeedback() {
+    // Login as founder
+    $this->drupalLogin($this->founder);
+    
+    // Go to feedback form
+    $this->drupalGet('feedback/submit');
+    $this->assertResponse(200, 'Founder can access feedback form.');
+    $this->assertText('Submit Feedback', 'Form title is displayed.');
+    
+    // Submit feedback
+    $edit = array(
+      'feedback_type' => 'mentor',
+      'rating' => 5,
+      'comment' => 'Great mentor session! Very helpful advice.',
+    );
+    $this->drupalPost('feedback/submit', $edit, t('Submit Feedback'));
+    
+    // Check success
+    $this->assertText('Thank you for your feedback!', 'Success message shown.');
+    
+    // Verify in database
+    $feedback = db_query("SELECT * FROM {feedback} WHERE submitted_by = :uid", 
+      array(':uid' => $this->founder->uid))->fetchObject();
+    
+    $this->assertTrue($feedback !== FALSE, 'Feedback saved to database.');
+    $this->assertEqual($feedback->rating, 5, 'Rating is correct.');
+    $this->assertEqual($feedback->feedback_type, 'mentor', 'Type is correct.');
+  }
+  
+  /**
+   * Test 2: Admin can view submitted feedback.
+   */
+  public function testAdminCanViewFeedback() {
+    // First, create a feedback entry
+    $feedback = entity_create('feedback', array(
+      'feedback_type' => 'general',
+      'rating' => 4,
+      'comment' => 'Test feedback for admin view',
+      'submitted_by' => $this->founder->uid,
+      'created' => REQUEST_TIME,
+      'status' => 'new',
+    ));
+    entity_save('feedback', $feedback);
+    
+    // Login as admin
+    $this->drupalLogin($this->admin);
+    
+    // Visit admin page
+    $this->drupalGet('admin/content/feedback');
+    $this->assertResponse(200, 'Admin can access feedback list.');
+    $this->assertText('Test feedback for admin view', 'Feedback is visible to admin.');
+    $this->assertText('General', 'Feedback type is displayed.');
+  }
+  
+  /**
+   * Test 3: Founder without permission cannot access admin page.
+   */
+  public function testPermissionsWork() {
+    // Login as founder (no admin permission)
+    $this->drupalLogin($this->founder);
+    
+    // Try to access admin page
+    $this->drupalGet('admin/content/feedback');
+    
+    // Should be denied
+    $this->assertResponse(403, 'Founder without admin permission is denied access (403).');
+  }
+}
