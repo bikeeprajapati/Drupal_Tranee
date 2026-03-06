@@ -601,10 +601,8 @@ function startup_scorecard_calculate_average($scores) {
 ## 📞 Technical Support
 
 **Developer:** Bikee Prajapati  
-**Email:** your.email@example.com  
+**Email:** bikeeprajapati1@gmail.com 
 **GitHub:** https://github.com/bikeeprajapati  
 
 ---
 
-*This technical documentation is maintained alongside the codebase.*  
-*Last Updated: March 2026*
