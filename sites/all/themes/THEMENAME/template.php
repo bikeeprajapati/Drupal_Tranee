@@ -1,34 +1,41 @@
 <?php
 
 /**
- * @file
- * Bootstrap sub-theme.
- *
- * Place your custom PHP code in this file.
+ * Add 403 theme suggestion
  */
-/**
- * Redirect anonymous users from Startup Dashboard to login page.
- */
-function mytheme_preprocess_page(&$variables) {
-  // Check if the user is anonymous
-if (user_is_anonymous()) {
-    // Get the current path
-    $current_path = current_path();
-    
-    // Redirect if this is the Startup Dashboard page
-    if ($current_path == 'incubator/startups') {
-    drupal_goto('user/login');
-    }
+function THEMENAME_preprocess_page(&$vars) {
+  if (drupal_get_http_header('Status') == '403 Forbidden') {
+    $vars['theme_hook_suggestions'][] = 'page__403';
+  }
 }
 
-}
 /**
- * Implements hook_preprocess_page().
+ * Status badges + currency formatting
  */
-function THEMENAME_preprocess_page(&$variables) {
-  // Add dashboard CSS
-  drupal_add_css(drupal_get_path('theme', 'THEMENAME') . '/css/dashboard.css', array(
-    'group' => CSS_THEME,
-    'weight' => 100,
-  ));
+function THEMENAME_preprocess_views_view_field(&$vars) {
+  $field = $vars['field'];
+
+  if ($field->field == 'field_startup_status') {
+    $value = $vars['output'];
+    $badges = array(
+      'Funded'      => array('bg' => '#d1fae5', 'color' => '#065f46'),
+      'Selected'    => array('bg' => '#dbeafe', 'color' => '#1e40af'),
+      'Screening'   => array('bg' => '#fef3c7', 'color' => '#d97706'),
+      'Shortlisted' => array('bg' => '#ede9fe', 'color' => '#6d28d9'),
+      'Rejected'    => array('bg' => '#fee2e2', 'color' => '#dc2626'),
+    );
+    foreach ($badges as $status => $style) {
+      if (strpos($value, $status) !== FALSE) {
+        $vars['output'] = '<span style="background:' . $style['bg'] . ';color:' . $style['color'] . ';padding:5px 14px;border-radius:20px;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;">' . $status . '</span>';
+        break;
+      }
+    }
+  }
+
+  if ($field->field == 'field_funding_requested') {
+    $raw = trim(strip_tags((string)$vars['output']));
+    if (is_numeric($raw) && $raw > 0) {
+      $vars['output'] = '$' . number_format((float)$raw, 0, '.', ',');
+    }
+  }
 }
