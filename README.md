@@ -428,8 +428,8 @@ drupal7/
 
 **Bikee Prajapati**
 - GitHub: [@bikeeprajapati](https://github.com/bikeeprajapati)
-- Email: your.email@example.com
-- LinkedIn: [Your LinkedIn]
+- Email: bikeeprajapati1@gmail.com
+- LinkedIn: https://www.linkedin.com/in/bikee-prajapati9898/
 
 ---
 
@@ -454,8 +454,4 @@ GPL-2.0 License - See [LICENSE.txt](LICENSE.txt)
 - Self-learning initiative
 - Project completion capability
 
-**Built with ❤️ during technical training program**
-
 ---
-
-*Last Updated: March 2026*
