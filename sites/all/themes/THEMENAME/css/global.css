@@ -279,3 +279,469 @@ td:has(> .field-content) {
   text-transform: uppercase !important;
   letter-spacing: 0.05em !important;
 }
+/* ===== LOGIN PAGE ===== */
+
+.page-user-login {
+  background: linear-gradient(135deg, #0f0c29 0%, #1a1a2e 40%, #16213e 70%, #0f3460 100%) !important;
+  min-height: 100vh !important;
+}
+
+.page-user-login #navbar,
+.page-user-login #page-header,
+.page-user-login .tabs--primary,
+.page-user-login h1.page-header,
+.page-user-login .form-item-openid-identifier,
+.page-user-login .openid-links { display: none !important; }
+
+/* Full page center */
+.page-user-login .main-container {
+  max-width: 100% !important;
+  min-height: 100vh !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 20px !important;
+  box-sizing: border-box !important;
+}
+
+.page-user-login .row,
+.page-user-login .col-sm-12,
+.page-user-login .region-content { display: contents !important; }
+
+/* Block = transparent wrapper */
+.page-user-login #block-system-main {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  border-radius: 0 !important;
+  padding: 0 !important;
+  max-width: 460px !important;
+  width: 100% !important;
+}
+
+.page-user-login #block-system-main::before,
+.page-user-login #block-system-main::after { display: none !important; }
+
+/* THE CARD */
+.page-user-login #user-login {
+  width: 100% !important;
+  background: #ffffff !important;
+  border-radius: 28px !important;
+  padding: 52px 48px !important;
+  box-shadow: 0 40px 100px rgba(0,0,0,0.55) !important;
+  box-sizing: border-box !important;
+  animation: cardIn 0.6s cubic-bezier(0.22,1,0.36,1) both !important;
+}
+
+@keyframes cardIn {
+  from { opacity: 0; transform: translateY(30px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* IX icon - injected before the form content */
+.page-user-login #user-login::before {
+  content: "IX";
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 72px;
+  height: 72px;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  border-radius: 20px;
+  font-size: 26px;
+  font-weight: 900;
+  color: white;
+  margin: 0 auto 28px auto;
+  box-shadow: 0 12px 32px rgba(102,126,234,0.5);
+}
+
+/* Welcome + subtitle via first label */
+.page-user-login #user-login label[for="edit-name"]::before {
+  content: "Welcome Back";
+  display: block;
+  font-size: 28px;
+  font-weight: 900;
+  color: #111827;
+  letter-spacing: -0.02em;
+  text-transform: none;
+  margin-bottom: 6px;
+  margin-top: 0;
+}
+
+.page-user-login #user-login label[for="edit-name"] {
+  margin-top: 0 !important;
+}
+
+/* Subtitle injected as description on first input */
+.page-user-login #user-login .form-item-name::before {
+  content: "Sign in to your InnovateX account";
+  display: block;
+  font-size: 14px;
+  color: #6b7280;
+  font-weight: 500;
+  margin-bottom: 24px;
+  margin-top: 4px;
+}
+
+.page-user-login #user-login label {
+  display: block !important;
+  font-size: 12px !important;
+  font-weight: 800 !important;
+  color: #374151 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.08em !important;
+  margin-bottom: 8px !important;
+}
+
+.page-user-login #user-login .form-item { margin-bottom: 20px !important; }
+
+.page-user-login #user-login input[type="text"],
+.page-user-login #user-login input[type="password"] {
+  width: 100% !important;
+  padding: 15px 18px !important;
+  border: 2px solid #e5e7eb !important;
+  border-radius: 12px !important;
+  font-size: 15px !important;
+  color: #111827 !important;
+  background: #f9fafb !important;
+  transition: all 0.25s !important;
+  box-sizing: border-box !important;
+  outline: none !important;
+}
+
+.page-user-login #user-login input[type="text"]:focus,
+.page-user-login #user-login input[type="password"]:focus {
+  border-color: #667eea !important;
+  background: #fff !important;
+  box-shadow: 0 0 0 4px rgba(102,126,234,0.12) !important;
+}
+
+.page-user-login #user-login .form-actions { margin-top: 8px !important; }
+
+.page-user-login #user-login .btn-primary {
+  width: 100% !important;
+  padding: 16px !important;
+  background: linear-gradient(135deg, #667eea, #764ba2) !important;
+  color: #fff !important;
+  border: none !important;
+  border-radius: 12px !important;
+  font-size: 15px !important;
+  font-weight: 800 !important;
+  cursor: pointer !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.08em !important;
+  box-shadow: 0 8px 24px rgba(102,126,234,0.45) !important;
+  transition: all 0.3s !important;
+}
+
+.page-user-login #user-login .btn-primary:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: 0 14px 32px rgba(102,126,234,0.6) !important;
+}
+
+/* Role badges */
+.page-user-login #user-login .form-actions::after {
+  content: "Admin  |  Founder  |  Mentor  |  Investor";
+  display: block;
+  text-align: center;
+  font-size: 11px;
+  color: #9ca3af;
+  font-weight: 700;
+  margin-top: 24px;
+  padding-top: 20px;
+  border-top: 1px solid #f3f4f6;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+/* Forgot password link */
+.page-user-login #user-login .form-actions::before {
+  content: "";
+  display: block;
+  margin-bottom: 12px;
+}
+
+/* Show forgot password and register as real links */
+.page-user-login .item-list {
+  display: flex !important;
+  gap: 16px !important;
+  justify-content: center !important;
+  margin-top: 16px !important;
+}
+
+.page-user-login .item-list ul {
+  display: flex !important;
+  gap: 16px !important;
+  list-style: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  flex-wrap: wrap !important;
+  justify-content: center !important;
+}
+
+.page-user-login .item-list ul li a {
+  color: #667eea !important;
+  font-size: 13px !important;
+  font-weight: 600 !important;
+  text-decoration: none !important;
+}
+
+.page-user-login .item-list ul li a:hover {
+  text-decoration: underline !important;
+}
+
+/* Glowing orbs */
+.page-user-login body::before {
+  content: "";
+  position: fixed;
+  top: -200px; left: -200px;
+  width: 600px; height: 600px;
+  background: radial-gradient(circle, rgba(102,126,234,0.2) 0%, transparent 65%);
+  border-radius: 50%;
+  z-index: 0;
+  pointer-events: none;
+}
+
+/* ===== FIX LOGGED-IN PAGES ===== */
+.logged-in .main-container {
+  max-width: 1140px !important;
+  margin: 0 auto !important;
+  padding: 0 15px !important;
+  display: block !important;
+  background: transparent !important;
+  min-height: auto !important;
+}
+
+.logged-in .row {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  margin: 0 -15px !important;
+  width: auto !important;
+  min-height: auto !important;
+  max-width: none !important;
+  align-items: flex-start !important;
+}
+
+.logged-in .col-sm-9 {
+  width: 75% !important; padding: 0 15px !important;
+  display: block !important; flex: none !important;
+}
+
+.logged-in .col-sm-12 {
+  width: 100% !important; padding: 0 15px !important;
+  display: block !important; flex: none !important;
+}
+
+.logged-in .region-content {
+  display: block !important; width: 100% !important; gap: 0 !important;
+}
+
+.logged-in #block-system-main {
+  display: block !important; flex: none !important;
+  background: transparent !important; box-shadow: none !important;
+  padding: 0 !important; max-width: none !important; width: 100% !important;
+  border-radius: 0 !important;
+}
+
+.logged-in #block-system-main::before,
+.logged-in #block-system-main::after,
+.logged-in body::before { display: none !important; }
+
+/* Show forgot password + create account links on login page */
+.page-user-login .item-list {
+  display: block !important;
+}
+
+.page-user-login .item-list ul {
+  display: flex !important;
+  gap: 20px !important;
+  list-style: none !important;
+  padding: 0 !important;
+  margin: 16px 0 0 0 !important;
+  justify-content: center !important;
+  flex-wrap: wrap !important;
+}
+
+.page-user-login .item-list ul li {
+  display: inline !important;
+}
+
+.page-user-login .item-list ul li a {
+  color: #667eea !important;
+  font-size: 13px !important;
+  font-weight: 600 !important;
+  text-decoration: none !important;
+  transition: color 0.2s !important;
+}
+
+.page-user-login .item-list ul li a:hover {
+  color: #764ba2 !important;
+  text-decoration: underline !important;
+}
+
+/* Separator between links */
+.page-user-login .item-list ul li + li::before {
+  content: "|";
+  color: #e5e7eb;
+  margin-right: 20px;
+}
+
+/* Fix: center the login card properly */
+.page-user-login .main-container {
+  justify-content: center !important;
+  align-items: center !important;
+}
+
+.page-user-login #block-system-main {
+  justify-content: center !important;
+  margin: 0 auto !important;
+}
+
+/* Fix: error message inside card area */
+.page-user-login .messages {
+  position: relative !important;
+  z-index: 100 !important;
+  max-width: 460px !important;
+  margin: 0 auto 16px auto !important;
+  border-radius: 12px !important;
+  padding: 14px 18px !important;
+  font-size: 14px !important;
+  font-weight: 600 !important;
+}
+
+.page-user-login .messages.error,
+.page-user-login .messages--error {
+  background: #fef2f2 !important;
+  border: 2px solid #fca5a5 !important;
+  color: #dc2626 !important;
+}
+
+.page-user-login .messages.status,
+.page-user-login .messages--status {
+  background: #f0fdf4 !important;
+  border: 2px solid #86efac !important;
+  color: #16a34a !important;
+}
+
+/* Fix: hide login sidebar block on dashboard */
+.logged-in #block-user-login { display: none !important; }
+
+/* Fix: hide login block sidebar everywhere for logged-in */
+.logged-in .region-sidebar-first #block-user-login { display: none !important; }
+
+/* Show forgot password + create account links below login button */
+.page-user-login #user-login .item-list {
+  display: block !important;
+  margin-top: 16px !important;
+}
+
+.page-user-login #user-login .item-list ul {
+  display: flex !important;
+  list-style: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  justify-content: center !important;
+  gap: 8px !important;
+  flex-wrap: wrap !important;
+}
+
+.page-user-login #user-login .item-list ul li {
+  display: inline-flex !important;
+  align-items: center !important;
+}
+
+.page-user-login #user-login .item-list ul li a {
+  color: #667eea !important;
+  font-size: 13px !important;
+  font-weight: 600 !important;
+  text-decoration: none !important;
+  padding: 6px 12px !important;
+  border-radius: 8px !important;
+  transition: all 0.2s !important;
+  background: #f5f3ff !important;
+}
+
+.page-user-login #user-login .item-list ul li a:hover {
+  background: #ede9fe !important;
+  color: #764ba2 !important;
+}
+
+/* Hide openid links, keep only useful ones */
+.page-user-login #user-login .item-list ul li:first-child,
+.page-user-login #user-login .item-list ul li:nth-child(2) {
+  display: none !important;
+}
+
+/* ===== TABS: position them inside the card ===== */
+
+/* The card (#user-login) is position:relative, tabs are outside it in DOM.
+   Solution: make the card's parent (#block-system-main) relative,
+   then absolutely position tabs over the bottom of the card */
+
+.page-user-login #block-system-main {
+  position: relative !important;
+}
+
+.page-user-login .tabs--primary {
+  position: absolute !important;
+  bottom: 28px !important;
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+  display: flex !important;
+  gap: 10px !important;
+  list-style: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  border: none !important;
+  background: transparent !important;
+  z-index: 50 !important;
+  white-space: nowrap !important;
+}
+
+/* Hide the active Log in tab */
+.page-user-login .tabs--primary li.active { display: none !important; }
+
+.page-user-login .tabs--primary li a {
+  display: inline-block !important;
+  font-size: 12px !important;
+  font-weight: 600 !important;
+  text-decoration: none !important;
+  padding: 8px 18px !important;
+  border-radius: 8px !important;
+  transition: all 0.2s !important;
+}
+
+/* Create new account */
+.page-user-login .tabs--primary li:first-child a {
+  color: #667eea !important;
+  background: rgba(102,126,234,0.08) !important;
+  border: 1.5px solid rgba(102,126,234,0.25) !important;
+}
+
+.page-user-login .tabs--primary li:first-child a:hover {
+  background: rgba(102,126,234,0.15) !important;
+}
+
+/* Request new password */
+.page-user-login .tabs--primary li:last-child a {
+  color: #6b7280 !important;
+  background: #f3f4f6 !important;
+  border: 1.5px solid #e5e7eb !important;
+}
+
+.page-user-login .tabs--primary li:last-child a:hover {
+  background: #e5e7eb !important;
+  color: #374151 !important;
+}
+
+/* Shrink bottom padding of card to make room for tabs */
+.page-user-login #user-login {
+  padding-bottom: 80px !important;
+}
+
+/* Role badges move up slightly */
+.page-user-login #user-login .form-actions::after {
+  margin-bottom: 0 !important;
+}
