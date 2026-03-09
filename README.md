@@ -429,9 +429,9 @@ drupal7/
 
 ## Contact
 
-**Email:** your.email@example.com  
+**Email:** bikeeprajapati1@gmail.com  
 **GitHub:** https://github.com/bikeeprajapati/Drupal_Tranee  
-**LinkedIn:** [Your Profile]
+**LinkedIn:** https://www.linkedin.com/in/bikee-prajapati9898/
 
 ---
 
