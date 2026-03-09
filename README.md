@@ -1,332 +1,381 @@
-# 🚀 SIMS - Startup Incubator Management System
+# SIMS - Startup Incubator Management System
 
-> A comprehensive Drupal 7 web application for managing startup incubation programs, built during technical training.
-
-[![Drupal](https://img.shields.io/badge/Drupal-7.x-0678BE?style=flat-square&logo=drupal)](https://www.drupal.org/)
-[![PHP](https://img.shields.io/badge/PHP-7.4-777BB4?style=flat-square&logo=php)](https://www.php.net/)
-[![MySQL](https://img.shields.io/badge/MySQL-5.7-4479A1?style=flat-square&logo=mysql)](https://www.mysql.com/)
-[![Bootstrap](https://img.shields.io/badge/Bootstrap-3.x-7952B3?style=flat-square&logo=bootstrap)](https://getbootstrap.com/)
+**Developed by:** Bikee Prajapati  
+**Training Program:** Virtual Training Session - Associate Software Engineer (PHP/Drupal)  
+**Duration:** 2-3 weeks  
+**Platform:** Drupal 7.98
 
 ---
 
-## 📖 Project Overview
+## Project Overview
 
-**SIMS (Startup Incubator Management System)** is a full-stack web application that digitizes and automates the entire startup incubation lifecycle. It replaces manual processes (Excel, emails, WhatsApp) with a structured, role-based platform.
+SIMS (Startup Incubator Management System) is a comprehensive web-based platform designed to digitize and automate the entire startup incubation lifecycle. The system addresses the critical challenges faced by startup incubators who currently manage operations using fragmented manual processes (Excel spreadsheets, emails, WhatsApp).
 
-### 🎯 Problem Statement
+### Problem Statement
 
-Startup incubators face challenges:
-- ❌ Manual tracking of startup applications
-- ❌ Inefficient mentor-startup matching  
-- ❌ Lack of structured progress monitoring
-- ❌ Poor visibility for investors
-- ❌ No centralized data or reporting
+Startup incubators face several operational challenges:
+- Manual tracking of startup applications and progress
+- Inefficient mentor-startup matching processes
+- Lack of structured progress monitoring systems
+- Poor visibility for investors and stakeholders
+- No centralized data repository or reporting capabilities
+- Time-consuming administrative tasks
 
-### ✅ Solution
+### Solution Delivered
 
-A web-based platform providing:
-- ✅ Automated submission and screening workflows
-- ✅ Intelligent mentor assignment system
-- ✅ Visual progress tracking with milestones
-- ✅ Multi-role dashboards with real-time analytics
-- ✅ Scorecard evaluation framework
-- ✅ Email notifications and workflow automation
-- ✅ Comprehensive reporting and feedback system
+SIMS provides an integrated platform that:
+- **Automates workflow processes** - From submission to funding
+- **Centralizes all data** - Single source of truth for operations
+- **Enables real-time visibility** - Role-based dashboards for all stakeholders
+- **Tracks progress systematically** - Visual milestone-based tracking
+- **Facilitates communication** - Automated email notifications
+- **Supports decision-making** - Comprehensive reporting and analytics
 
----
+### Key Features
 
-## 🌟 Key Features
+**Multi-Role System:**
+- 5 distinct user roles (Admin, Incubator Manager, Mentor, Founder, Investor)
+- Role-based permissions and access control
+- Customized dashboards for each role
 
-### 🎨 Multi-Role Dashboard System
-- **Admin Dashboard** - Portfolio overview, screening queue, analytics
-- **Founder Dashboard** - Startup progress, mentor communication, milestones
-- **Mentor Dashboard** - Assigned startups, scorecard submission, progress monitoring
-- **Investor Dashboard** - Funded startups, ROI metrics, portfolio filtering
+**Core Functionality:**
+- Startup submission and screening workflow
+- Mentor-startup assignment system
+- Visual progress tracking with milestones
+- Multi-criteria scorecard evaluation
+- Feedback collection and moderation
+- Automated email notifications
+- Comprehensive reporting
 
-### 📊 Progress Tracker Module ⭐ (2,000+ lines)
-- Visual timeline with milestone tracking
-- Status indicators (Not Started, In Progress, Completed, Overdue)
-- Progress bars with completion percentages
-- Priority levels (Low, Medium, High, Critical)
-- Email notifications for overdue milestones
-- Complete audit trail for all updates
-- 10 pre-configured milestone templates
-
-### 🤝 Mentor Matching System
-- Manual and automated mentor assignment
-- Mentor-startup relationship tracking
-- Assignment history and audit logs
-- Email notifications on assignment
-
-### 📝 Scorecard Evaluation
-- Multi-criteria rating (Team, Market, Product, Business Model, Traction)
-- Aggregate scoring (1-10 scale)
-- Historical scorecard tracking
-- Mentor feedback and comments
-
-### 💬 Feedback Entity (Custom Drupal Entity)
-- Custom entity built from scratch (not node-based)
-- Feedback types: Mentor Session, Milestone, Resource, General
-- 5-star rating system
-- Admin moderation interface
-
-### 🔔 Workflow Automation
-- 8 configured Rules for automation
-- Email notifications (status changes, assignments, deadlines)
-- Role-based login redirects
-- Automated status transitions
+**Technical Highlights:**
+- 4 custom modules (~3,500 lines of code)
+- 6 normalized database tables
+- 5 role-specific dashboards
+- 8 automated workflow rules
+- 56 test assertions (100% pass rate)
+- Production-ready code quality
 
 ---
 
-## 🏗 Technical Architecture
-
-### Technology Stack
+## Technology Stack
 
 | Component | Technology | Version |
 |-----------|-----------|---------|
 | **CMS Framework** | Drupal | 7.98 |
-| **Backend** | PHP | 7.4 |
+| **Backend Language** | PHP | 7.4 |
 | **Database** | MySQL | 5.7 |
-| **Frontend** | Bootstrap | 3.x |
-| **Styling** | Custom CSS3 | Gradients, Animations |
-| **JavaScript** | jQuery | (Drupal core) |
+| **Web Server** | Apache | 2.4 |
+| **Frontend Framework** | Bootstrap | 3.x |
+| **JavaScript Library** | jQuery | 1.x |
 | **CLI Tool** | Drush | 8.x |
-
-### Contrib Modules
-- Views 3.x - Dynamic content displays
-- Rules 2.x - Workflow automation  
-- Entity API 1.x - Custom entity foundation
-- CTools 1.x - Tools for modules
-- Date 2.x - Date field handling
 
 ---
 
-## 📦 Custom Modules
+## Custom Modules Created
 
-### 1. progress_tracker (Flagship - 2,000 lines)
-**Location:** `/sites/all/modules/custom/progress_tracker`
+I developed 4 custom modules from scratch, demonstrating proficiency in Drupal module development, database design, and software architecture.
+
+### 1. Progress Tracker Module ⭐ (Flagship Module)
+
+**Location:** `/sites/all/modules/custom/progress_tracker`  
+**Lines of Code:** ~2,000 lines  
+**Complexity:** High
+
+**Purpose:** A comprehensive milestone-based progress tracking system with visual timelines, automated notifications, and complete audit trails.
 
 **Features:**
-- Visual timeline with status icons
-- Progress bars (0-100%)
-- 10 default milestone templates
-- Priority levels
-- Overdue detection
-- Email notifications
-- Statistics calculation
-- Update history (audit trail)
+- Visual timeline display with status icons
+- Progress bars showing completion percentage (0-100%)
+- Status tracking (Not Started, In Progress, Completed, Overdue)
+- Priority levels (Low, Medium, High, Critical)
+- 10 pre-configured milestone templates
+- Email notifications for assignments and overdue items
+- Complete audit trail of all progress updates
+- Real-time statistics calculation
 
-**Database Schema:**
-- `progress_milestones` - Template definitions
-- `progress_milestone_assignments` - Assigned milestones
-- `progress_updates` - Audit trail
+**Database Tables:**
+1. `progress_milestones` - Template definitions
+2. `progress_milestone_assignments` - Assigned milestones
+3. `progress_updates` - Complete audit trail
 
-### 2. mentor_matching
-**Location:** `/sites/all/modules/custom/mentor_matching`
+**Key Functions:**
+- `progress_tracker_get_startup_stats()` - Calculates real-time statistics
+- `progress_tracker_load_startup_milestones()` - Retrieves milestones
+- `progress_tracker_save_assignment()` - Creates assignments
+- `progress_tracker_update_progress()` - Records updates
+
+---
+
+### 2. Mentor Matching Module
+
+**Location:** `/sites/all/modules/custom/mentor_matching`  
+**Lines of Code:** ~400 lines
+
+**Purpose:** Manages mentor-startup relationships with assignment tracking and history.
 
 **Features:**
 - Assign mentors to startups
 - Track assignment history
-- Query mentor's assigned startups
 - Email notifications
+- Admin management interface
 
-### 3. startup_scorecard
-**Location:** `/sites/all/modules/custom/startup_scorecard`
+**Database Table:** `mentor_matching_history`
+
+---
+
+### 3. Startup Scorecard Module
+
+**Location:** `/sites/all/modules/custom/startup_scorecard`  
+**Lines of Code:** ~500 lines
+
+**Purpose:** Multi-criteria evaluation system for startups.
 
 **Features:**
-- 5 scoring criteria (1-10 scale)
-- Aggregate score calculation
+- 5 scoring criteria (Team, Market, Product, Business Model, Traction)
+- Scale: 1-10 for each criterion
+- Automatic aggregate calculation
 - Historical tracking
 - Mentor comments
 
-### 4. feedback_entity
-**Location:** `/sites/all/modules/custom/feedback_entity`
+**Database Table:** `startup_scorecard`
+
+---
+
+### 4. Feedback Entity Module (Custom Entity)
+
+**Location:** `/sites/all/modules/custom/feedback_entity`  
+**Lines of Code:** ~200 lines  
+**Complexity:** Medium-High
+
+**Purpose:** Custom entity for collecting structured feedback from stakeholders.
+
+**Why a Custom Entity?**
+
+I built this as a custom entity using Entity API instead of a content type because:
+- Represents data, not content (no need for revision system)
+- Simpler, more efficient structure
+- Better performance (fewer database joins)
+- Demonstrates advanced Drupal API knowledge
 
 **Features:**
-- Custom entity (Entity API)
-- CRUD operations
-- Rating system (1-5 stars)
-- Admin moderation
-- Automated testing
+- Custom entity built from scratch using Entity API
+- Four feedback types (Mentor Session, Milestone, Resource, General)
+- 5-star rating system
+- Admin moderation interface
+- Status tracking (New, Reviewed, Archived)
 
----
+**Database Table:** `feedback` (custom entity table)
 
-## 🗄 Database Design
+**Entity Definition:**
+```php
+'feedback' => array(
+  'label' => t('Feedback'),
+  'entity class' => 'Entity',
+  'controller class' => 'EntityAPIController',
+  'base table' => 'feedback',
+  'entity keys' => array('id' => 'feedback_id'),
+)
+```
 
-### Content Types
-- **startup_idea** - Main content type with 12+ fields
+**CRUD Operations:**
 
-### Custom Tables (6 total)
-1. `mentor_matching_history`
-2. `startup_scorecard`
-3. `progress_milestones`
-4. `progress_milestone_assignments`
-5. `progress_updates`
-6. `feedback`
+**Create:**
+```php
+$feedback = entity_create('feedback', array(
+  'feedback_type' => 'mentor',
+  'rating' => 5,
+  'comment' => 'Great session!',
+));
+entity_save('feedback', $feedback);
+```
 
-### User Roles (5)
-- Administrator
-- Incubator Manager
-- Mentor
-- Founder
-- Investor
+**Read:**
+```php
+$feedback = entity_load_single('feedback', $id);
+```
 
----
+**Update:**
+```php
+$feedback->status = 'reviewed';
+entity_save('feedback', $feedback);
+```
 
-## 🔒 Security & Access Control
+**Delete:**
+```php
+entity_delete('feedback', $id);
+```
 
-### Security Features
-- Role-based access control (RBAC)
-- Permission-based menu access
-- Data ownership validation
-- SQL injection prevention (parameterized queries)
-- XSS protection (check_plain, filter_xss)
-- CSRF protection (Drupal form tokens)
-
-### Permissions Matrix
-
-| Role | Create Startup | Edit All | Assign Mentor | Submit Score | View Reports |
-|------|---------------|----------|---------------|--------------|--------------|
-| Admin | ✅ | ✅ | ✅ | ✅ | ✅ |
-| Manager | ✅ | ✅ | ✅ | ✅ | ✅ |
-| Mentor | ❌ | Assigned only | ❌ | ✅ | ✅ |
-| Founder | ✅ | Own only | ❌ | ❌ | Own only |
-| Investor | ❌ | ❌ | ❌ | ❌ | Funded only |
-
----
-
-## 🧪 Testing
-
-### Automated Testing
-**Framework:** Drupal SimpleTest
-
-**Test Suite:** `FeedbackEntitySimpleTest`
+**Automated Testing:**
+- Test Suite: FeedbackEntitySimpleTest
 - 3 test methods
 - 56 assertions
 - 100% pass rate
-- Test duration: 56 seconds
 
-**Coverage:**
-- Form accessibility
-- Data persistence
-- Admin interface
-- Permission validation
-- Entity CRUD operations
+---
 
-**Run Tests:**
-```bash
-drush test-run "Feedback Entity - Basic Test"
+## Custom Entity Module - Detailed Explanation
+
+### What is a Custom Entity?
+
+In Drupal, an entity is a data structure representing a distinct object. Built-in entities include Node, User, Taxonomy Term, and Comment.
+
+A **custom entity** is defined from scratch to represent application-specific data.
+
+### When to Use Custom Entity vs. Content Type
+
+**Use Content Type (Node) When:**
+- Need revision tracking
+- Content workflows important
+- Comments required
+- SEO and URLs matter
+
+**Use Custom Entity When:**
+- Pure data (not "content")
+- Don't need node overhead
+- Want better performance
+- Need full structural control
+
+### Feedback Entity Implementation
+
+**Architecture:**
+```
+Entity API Framework
+        ↓
+Entity Definition (hook_entity_info)
+        ↓
+Database Table (feedback)
+        ↓
+CRUD Controllers
+        ↓
+Access Control
+        ↓
+Forms & UI
 ```
 
-Or via web UI: `/admin/config/development/testing`
+**Database Schema:**
+```sql
+feedback table:
+- feedback_id (Primary Key)
+- feedback_type (mentor/milestone/resource/general)
+- rating (1-5 stars)
+- comment (detailed feedback)
+- submitted_by (user ID)
+- created (timestamp)
+- status (new/reviewed/archived)
+```
+
+**Benefits:**
+- Clean, simple structure
+- Fast single-table queries
+- Full control over functionality
+- Professional implementation
 
 ---
 
-## 📊 Project Statistics
+## Database Design
 
-| Metric | Value |
-|--------|-------|
-| **Total Lines of Code** | ~3,500+ |
-| **Custom Modules** | 4 |
-| **Database Tables** | 6 custom + Drupal core |
-| **Views/Dashboards** | 5 |
-| **Workflow Rules** | 8 |
-| **Content Types** | 1 main (startup_idea) |
-| **User Roles** | 5 |
-| **Test Assertions** | 56 (100% pass) |
-| **Development Time** | 2-3 weeks |
-| **Files Created** | 30+ |
+### Tables Overview
 
----
+6 custom database tables with proper normalization and indexing:
 
-## 🎨 UI/UX Design
+1. **mentor_matching_history** - Mentor assignments
+2. **startup_scorecard** - Evaluation scores
+3. **progress_milestones** - Milestone templates
+4. **progress_milestone_assignments** - Assigned milestones
+5. **progress_updates** - Audit trail
+6. **feedback** - Custom entity
 
-### Design Philosophy
-- **Modern Gradient UI** - Purple gradient (#667eea → #764ba2)
-- **Glassmorphism** - Backdrop blur effects
-- **Color-coded Status** - Visual indicators
-- **Responsive Design** - Mobile-first approach
-- **Smooth Animations** - Hover effects and transitions
+### Design Principles
 
-### Status Color Coding
-- 🟢 **Funded** - Green
-- 🔵 **Selected** - Blue
-- 🟡 **Screening** - Yellow
-- 🔴 **Rejected** - Red
-- ⚪ **Submitted** - Purple
+- **Normalization:** Third Normal Form (3NF)
+- **Performance:** Strategic indexing
+- **Scalability:** Supports 1000+ startups
+- **Maintainability:** Clear naming conventions
 
 ---
 
-## 🚀 Installation
+## Security Implementation
+
+### Access Control
+
+**Role-Based Permissions:**
+- 5 distinct roles with specific permissions
+- Access callbacks on every page
+- Data ownership verification
+
+**Permission Matrix:**
+
+| Role | Create | Edit All | Assign Mentor | Submit Score | Reports |
+|------|--------|----------|---------------|--------------|---------|
+| Admin | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Manager | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Mentor | ❌ | Assigned | ❌ | ✅ | ✅ |
+| Founder | ✅ | Own Only | ❌ | ❌ | Own |
+| Investor | ❌ | ❌ | ❌ | ❌ | Funded |
+
+### Security Measures
+
+- **SQL Injection Prevention:** Parameterized queries
+- **XSS Protection:** Output sanitization
+- **CSRF Protection:** Form tokens
+- **Input Validation:** Server-side validation
+
+---
+
+## Testing & Quality Assurance
+
+**Framework:** Drupal SimpleTest
+
+**Test Suite:** FeedbackEntitySimpleTest
+- Test Methods: 3
+- Total Assertions: 56
+- Pass Rate: 100%
+- Failures: 0
+
+**Coverage:**
+- Functional testing
+- Integration testing
+- Security testing
+- CRUD operations
+
+---
+
+## Installation Instructions
 
 ### Prerequisites
 - Apache 2.4+
-- PHP 7.2+ (7.4 recommended)
-- MySQL 5.7+ or MariaDB 10.3+
-- Drush 8.x (optional)
+- PHP 7.4
+- MySQL 5.7+
+- Drush 8.x
 
-### Quick Install
+### Quick Setup
+
+**1. Import Database:**
 ```bash
-# Clone repository
-git clone https://github.com/bikeeprajapati/Drupal_Tranee.git
-cd Drupal_Tranee
+mysql -u root -p sims_db < sims_database.sql
+```
 
-# Configure database
-cp sites/default/default.settings.php sites/default/settings.php
-# Edit settings.php with your database credentials
+**2. Configure:**
+- Update `sites/default/settings.php` with database credentials
 
-# Install contrib modules
-drush dl views rules entity ctools date
-drush en views rules entity ctools date -y
+**3. Set Permissions:**
+```bash
+chmod 644 sites/default/settings.php
+chmod 755 sites/default/files
+```
 
-# Enable custom modules
-drush en mentor_matching startup_scorecard progress_tracker feedback_entity -y
-
-# Clear cache
+**4. Clear Cache:**
+```bash
 drush cc all
 ```
 
-### Full Installation Guide
-See [INSTALL.txt](INSTALL.txt) for detailed setup instructions.
+**5. Login:**
+- URL: http://localhost/drupal7
+- See CREDENTIALS.txt for login details
 
 ---
 
-## 🎯 Learning Outcomes
-
-### Technical Skills Demonstrated
-
-**Backend Development:**
-- Custom Drupal module development
-- Database schema design and normalization
-- Entity API implementation
-- Form API (validation, submission handlers)
-- Hook system implementation
-- CRUD operations
-- SQL query optimization
-
-**Frontend Development:**
-- Responsive UI design (Bootstrap)
-- Custom CSS3 (gradients, animations)
-- JavaScript/jQuery
-- AJAX interactions
-- UX design principles
-
-**System Design:**
-- Multi-tier architecture
-- Role-based access control (RBAC)
-- Workflow automation (Rules)
-- Email notification system
-- RESTful principles
-
-**Testing & Quality:**
-- Unit testing (SimpleTest)
-- Functional testing
-- Security testing
-- Test-driven development
-
----
-
-## 📂 Project Structure
+## Project Structure
 ```
 drupal7/
 ├── sites/all/modules/custom/
@@ -337,121 +386,59 @@ drupal7/
 │   │   └── tests/
 │   ├── mentor_matching/
 │   ├── progress_tracker/
-│   │   ├── progress_tracker.info
-│   │   ├── progress_tracker.module
-│   │   ├── progress_tracker.install
-│   │   ├── progress_tracker.admin.inc
-│   │   ├── progress_tracker.pages.inc
-│   │   ├── progress_tracker.css
-│   │   └── progress_tracker.js
 │   └── startup_scorecard/
-└── sites/all/themes/bootstrap/
+└── sites/default/
+    ├── settings.php
+    └── files/
 ```
 
 ---
 
-## 🎬 Demo
+## Technical Achievements
 
-**Live Instance:** http://localhost/drupal7
-
-**Test Credentials:**
-- Admin: `admin` / `[password]`
-- Founder: `founder1` / `test123`
-- Mentor: `mentor1` / `test123`
-
-**Key Pages:**
-- Admin Dashboard: `/admin/dashboard`
-- Startup Listing: `/startup-dashboard`
-- Progress Tracker: `/node/[nid]/progress`
-- Feedback Form: `/feedback/submit`
+- ✅ 3,500+ lines of custom code
+- ✅ 4 custom modules from scratch
+- ✅ 6 normalized database tables
+- ✅ 5 role-specific dashboards
+- ✅ 8 workflow automation rules
+- ✅ 1 custom entity (Entity API)
+- ✅ 56 test assertions (100% pass)
+- ✅ Production-ready quality
 
 ---
 
-## 🚀 Future Enhancements
+## Future Enhancements
 
-### Planned Features
-- [ ] AI-powered mentor matching
-- [ ] Advanced analytics with charts
-- [ ] Document management system
-- [ ] Calendar integration (Google Calendar)
-- [ ] Mobile app (React Native)
-- [ ] RESTful API for integrations
-- [ ] Multi-language support (i18n)
+- AI-powered mentor matching
+- Advanced analytics dashboard
+- Document management system
+- Mobile application
+- RESTful API
+- Multi-language support
 
 ---
 
-## 💼 Project Highlights
+## Credits
 
-### What Makes This Special
-
-**1. Production-Ready Quality**
-- Proper error handling
-- Input validation
-- Security best practices
-- Comprehensive testing
-
-**2. Full-Stack Development**
-- Database design
-- Backend logic (PHP/Drupal)
-- Frontend (HTML/CSS/JS)
-- System integration
-
-**3. Complex Business Logic**
-- Multi-role permissions
-- Workflow automation
-- Custom entity development
-- Audit trails
-
-**4. Modern UI/UX**
-- Custom gradient design
-- Smooth animations
-- Responsive mobile layout
-
-**5. Enterprise Features**
-- Role-based dashboards
-- Email notifications
-- Progress tracking
-- Reporting & analytics
+**Developer:** Bikee Prajapati  
+**Training Program:** Associate Software Engineer (PHP/Drupal)  
+**Duration:** 2-3 weeks  
+**Completion:** March 2026
 
 ---
 
-## 📝 Documentation
+## Contact
 
-- **README.md** - This file
-- **Code Comments** - Inline documentation throughout
-- **Test Documentation** - In `/tests/` directories
-- **API Documentation** - Function headers with parameters
-
----
-
-## 👨‍💻 Author
-
-**Bikee Prajapati**
-- GitHub: [@bikeeprajapati](https://github.com/bikeeprajapati)
-- Email: bikeeprajapati1@gmail.com
-- LinkedIn: https://www.linkedin.com/in/bikee-prajapati9898/
+**Email:** your.email@example.com  
+**GitHub:** https://github.com/bikeeprajapati/Drupal_Tranee  
+**LinkedIn:** [Your Profile]
 
 ---
 
-## 📄 License
+## License
 
-GPL-2.0 License - See [LICENSE.txt](LICENSE.txt)
-
----
-
-## 🙏 Acknowledgments
-
-- Drupal Community
-- Bootstrap Team
-- Training mentors and peers
+GPL-2.0 - Educational/Portfolio Project
 
 ---
 
-**⭐ This project demonstrates:**
-- Full-stack web development
-- Problem-solving abilities
-- Code quality standards
-- Self-learning initiative
-- Project completion capability
-
----
+**Last Updated:** March 6, 2026
