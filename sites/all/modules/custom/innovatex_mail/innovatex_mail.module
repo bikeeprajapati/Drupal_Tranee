@@ -24,3 +24,22 @@ function innovatex_mail_send_to_role($role_id, $subject, $body) {
     drupal_mail('innovatex_mail', 'notify', $user->mail, language_default(), $params);
   }
 }
+
+/**
+ * Implements hook_init().
+ * Role-based front page redirect.
+ */
+function innovatex_mail_init() {
+  global $user;
+  if ($user->uid > 0 && drupal_is_front_page()) {
+    if (in_array('administrator', $user->roles) || in_array('Incubator Manager', $user->roles)) {
+      drupal_goto('admin/dashboard');
+    } elseif (in_array('Founder', $user->roles)) {
+      drupal_goto('founder/dashboard');
+    } elseif (in_array('Mentor', $user->roles)) {
+      drupal_goto('mentor/startups');
+    } elseif (in_array('Investor', $user->roles)) {
+      drupal_goto('investor/startups');
+    }
+  }
+}
